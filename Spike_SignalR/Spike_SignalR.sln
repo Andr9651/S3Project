@@ -5,6 +5,10 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike_SignalR", "Spike_SignalR.csproj", "{511AA039-5FD9-4CFF-BD82-1F42536194F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike_SignalR_Test", "..\Spike_SignalR_Test\Spike_SignalR_Test.csproj", "{21327573-4F2C-4443-BBA4-7B59797B4A2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike_SignalR_Client", "..\Spike_SignalR_Client\Spike_SignalR_Client.csproj", "{5009CFFF-37ED-4702-8E2B-40C5EE93C8E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{511AA039-5FD9-4CFF-BD82-1F42536194F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511AA039-5FD9-4CFF-BD82-1F42536194F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511AA039-5FD9-4CFF-BD82-1F42536194F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21327573-4F2C-4443-BBA4-7B59797B4A2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21327573-4F2C-4443-BBA4-7B59797B4A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21327573-4F2C-4443-BBA4-7B59797B4A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21327573-4F2C-4443-BBA4-7B59797B4A2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5009CFFF-37ED-4702-8E2B-40C5EE93C8E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5009CFFF-37ED-4702-8E2B-40C5EE93C8E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5009CFFF-37ED-4702-8E2B-40C5EE93C8E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5009CFFF-37ED-4702-8E2B-40C5EE93C8E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
