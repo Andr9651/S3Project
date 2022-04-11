@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Spike_SignalR\Spike_SignalR.csproj" />
+    <ProjectReference Include="..\Spike_SignalR_Client\Spike_SignalR_Client.csproj" />
   </ItemGroup>
 
 </Project>
