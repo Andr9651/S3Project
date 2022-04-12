@@ -1,0 +1,89 @@
+﻿@page "/cockieClicker"
+@using Microsoft.AspNetCore.SignalR.Client;
+@using Microsoft.AspNetCore.SignalR;
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+<p role="status">Response: @response</p>
+<p role="status">Is Connected: @IsConnected</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="Test2">Test2</button>
+<button class="btn btn-primary" @onclick="Test">Test</button>
+
+
+
+@code {
+
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    private void Test2()
+    {
+        currentCount += 100;
+    }
+
+    public bool IsConnected =>
+        connection?.State == HubConnectionState.Connected;
+
+    private HubConnectionBuilder builder;
+
+    private HubConnection connection;
+
+    private string response = "no response yet";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        builder = new HubConnectionBuilder();
+
+        builder.WithUrl("Https://localhost:5001/hub");
+
+        connection = builder.Build();
+
+
+        Action<string> buyBuildingResponse = (response) =>
+        {
+            this.response = response;
+            this.response += DateTime.Now +":"+ DateTime.Now.Millisecond;
+            InvokeAsync(StateHasChanged);
+        };
+
+        connection.On("BuyBuildingResponse", buyBuildingResponse);
+
+        await connection.StartAsync();
+
+
+    }
+
+
+
+
+    private async void Test()
+    {
+
+        if (connection is not null)
+        {
+
+            object[] parameters = new[] { "Candy Store" };
+
+            await connection.InvokeCoreAsync("BuyBuilding", parameters);
+
+            
+        }
+
+
+    }
+
+}
+
+
+
