@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 @using Microsoft.AspNetCore.SignalR;
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Counters</PageTitle>
 
 <h1>Counter</h1>
 
@@ -10,26 +10,13 @@
 <p role="status">Response: @response</p>
 <p role="status">Is Connected: @IsConnected</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-<button class="btn btn-primary" @onclick="Test2">Test2</button>
-<button class="btn btn-primary" @onclick="Test">Test</button>
-
+<button class="btn btn-primary" @onclick="BuyBuilding">Test</button>
 
 
 @code {
 
 
     private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-
-    private void Test2()
-    {
-        currentCount += 100;
-    }
 
     public bool IsConnected =>
         connection?.State == HubConnectionState.Connected;
@@ -59,21 +46,24 @@
 
         connection.On("BuyBuildingResponse", buyBuildingResponse);
 
+        Action<int> balanceUpdate = (balance) =>
+        {
+            currentCount = balance;
+            InvokeAsync(StateHasChanged);
+        };
+
+        connection.On("BalanceUpdate", balanceUpdate);
+
         await connection.StartAsync();
-
-
     }
 
-
-
-
-    private async void Test()
+    private async void BuyBuilding()
     {
 
         if (connection is not null)
         {
 
-            object[] parameters = new[] { "Candy Store" };
+            object[] parameters = new[] { "Candy Store", connection.ConnectionId };
 
             await connection.InvokeCoreAsync("BuyBuilding", parameters);
 
