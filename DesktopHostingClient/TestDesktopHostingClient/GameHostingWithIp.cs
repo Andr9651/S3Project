@@ -23,14 +23,34 @@ public class GameHostingWithIp
 
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
-        HubConnection connection = builder.Build(); 
-        connection.StartAsync().Wait();  
-        
+        HubConnection connection = builder.Build();
+        connection.StartAsync().Wait();
+
 
         //Assert
         Assert.Equal(HubConnectionState.Connected, connection.State);
 
 
+    }
+    public void TestGetGameRefrence()
+    {
+        //Arrange
+        GameDataController gameDataController = GameDataController.GetInstance();
+        HostingController hostingController = new HostingController();
+        
+        //Act
+        hostingController.SetupSignalRHost();
+
+        hostingController.StartHosting().Wait();
+
+        HubConnectionBuilder builder = new HubConnectionBuilder();
+        builder.WithUrl("http://localhost:5100/GameHub");
+        HubConnection connection = builder.Build();
+        connection.StartAsync().Wait();
+        gameDataController.CreateGameData();
+
+
+        //Assert
     }
 
 }

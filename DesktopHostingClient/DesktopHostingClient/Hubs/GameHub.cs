@@ -8,7 +8,11 @@ public class GameHub : Hub
 {
     public GameDataController GameDataController { get; set; }
 
+    public GameHub()
+    {
+            GameDataController =  GameDataController.GetInstance();
 
+    }
 
 
 

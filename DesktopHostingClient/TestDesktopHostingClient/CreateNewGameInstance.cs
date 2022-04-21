@@ -11,7 +11,7 @@ public class CreateNewGameInstance
     public void TestCreateGame()
     {
         //Arrange
-        GameDataController gameDataController = new GameDataController();
+        GameDataController gameDataController =  GameDataController.GetInstance();
 
         //Act
         gameDataController.CreateGameData();
