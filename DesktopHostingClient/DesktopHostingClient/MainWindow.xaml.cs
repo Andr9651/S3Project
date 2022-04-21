@@ -21,16 +21,15 @@ namespace DesktopHostingClient;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public GameDataController gameDataController { get; set; }
+    public GameDataController GameDataController { get; set; }
     
     public MainWindow()
     {
         InitializeComponent();
-        gameDataController = new GameDataController();
+        GameDataController = new GameDataController();
     }
-    // ¯\_(ツ)_/¯
-    public void ButtonNewGame_Click(object sender, RoutedEventArgs e)
+    private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
     {
-        gameDataController.CreateGameData();
+        GameDataController.CreateGameData();
     }
 }
