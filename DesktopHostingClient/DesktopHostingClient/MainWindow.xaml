@@ -7,15 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonNewGame" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Margin="23,52,0,0" Width="104" Click="ButtonNewGame_Click"/>
 
     </Grid>
 </Window>

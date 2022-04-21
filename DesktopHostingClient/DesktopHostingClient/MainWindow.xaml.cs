@@ -12,25 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using DesktopHostingClient.Controller;
 
-namespace DesktopHostingClient;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace DesktopHostingClient
 {
-    public GameDataController gameDataController { get; set; }
-    
-    public MainWindow()
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        gameDataController = new GameDataController();
-    }
-    // ¯\_(ツ)_/¯
-    public void ButtonNewGame_Click(object sender, RoutedEventArgs e)
-    {
-        gameDataController.CreateGameData();
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
     }
 }
