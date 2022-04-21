@@ -1,5 +1,7 @@
 using Xunit;
 using DesktopHostingClient.Controller;
+using DesktopHostingClient;
+using System;
 
 namespace TestDesktopHostingClient;
 
@@ -13,7 +15,7 @@ public class CreateNewGameInstance
 
         //Act
         gameDataController.CreateGameData();
-
+        
         //Assert
         Assert.NotNull(gameDataController.GameData);
     }
