@@ -1,19 +1,20 @@
 using Xunit;
-//using DesktopHostingClient;
+using DesktopHostingClient.Controller;
 
-namespace TestDesktopHostingClient
+namespace TestDesktopHostingClient;
+
+public class CreateNewGameInstance
 {
-    public class CreateNewGameInstance
+    [Fact]
+    public void TestCreateGame()
     {
-        [Fact]
-        public void TestCreateGame()
-        {
-            //Arrange
-            
-            //Act
-            
-            //Assert
+        //Arrange
+        GameDataController gameDataController = new GameDataController();
 
-        }
+        //Act
+        gameDataController.CreateGameData();
+
+        //Assert
+        Assert.NotNull(gameDataController.GameData);
     }
 }
