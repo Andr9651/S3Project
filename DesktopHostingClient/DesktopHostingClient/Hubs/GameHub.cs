@@ -20,6 +20,9 @@ public class GameHub : Hub
         return GameDataManager.GameData;
     } 
 
-
+    public void Ping()
+    {
+        Clients.Caller.SendAsync("Pong");
+    }
 
 }

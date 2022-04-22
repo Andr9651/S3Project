@@ -10,18 +10,22 @@ using DesktopHostingClient.Model;
 
 namespace TestDesktopHostingClient;
 
-public class GameHostingWithIp
+public class GameHostingWithIp : IDisposable
 {
+    private HostingManager _hostingManager;
+    public GameHostingWithIp()
+    {
+        _hostingManager = new HostingManager();
+        _hostingManager.SetupSignalRHost();
+        _hostingManager.StartHosting().Wait();
+    }
+
     [Fact]
     public void TestGetSignalRConnection()
     {
         //Arrange 
-        HostingManager hostingManager = new HostingManager();
+        
         //Act
-        hostingManager.SetupSignalRHost();
-
-        hostingManager.StartHosting().Wait();
-
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
@@ -31,7 +35,6 @@ public class GameHostingWithIp
         //Assert
         Assert.Equal(HubConnectionState.Connected, connection.State);
 
-        hostingManager.DisposeHost();
         connection.DisposeAsync();
     }
 
@@ -40,13 +43,8 @@ public class GameHostingWithIp
     {
         //Arrange
         GameDataManager gameDataManager = GameDataManager.GetInstance();
-        HostingManager hostingManager = new HostingManager();
-        
+
         //Act
-        hostingManager.SetupSignalRHost();
-
-        hostingManager.StartHosting().Wait();
-
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
@@ -60,8 +58,37 @@ public class GameHostingWithIp
         //Assert
         Assert.NotNull(gameData);
 
-        hostingManager.DisposeHost();
         connection.DisposeAsync();
     }
 
+    [Fact]
+    public void RecieveRPCfromHost()
+    {
+        //Arrange
+
+        //Act
+        HubConnectionBuilder builder = new HubConnectionBuilder();
+        builder.WithUrl("http://localhost:5100/GameHub");
+        HubConnection connection = builder.Build();
+        
+        bool ponged = false;
+
+        connection.On("Pong", () =>
+        {
+            ponged = true;
+        });
+
+        connection.StartAsync().Wait();
+        connection.InvokeAsync("Ping").Wait();
+
+        //Assert
+        Assert.True(ponged);
+
+        connection.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _hostingManager.DisposeHost();
+    }
 }
