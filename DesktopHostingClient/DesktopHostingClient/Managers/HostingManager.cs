@@ -9,16 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesktopHostingClient.Controller;
+namespace DesktopHostingClient.Managers;
 
-public class HostingController
+public class HostingManager
 {
     private IHost _host;
 
     public void SetupSignalRHost()
     {
-        // Check if host is null if its not null it will dispose the host
-        _host?.Dispose();
+        DisposeHost();
 
         IHostBuilder hostBuilder = Host.CreateDefaultBuilder();
 
@@ -44,12 +43,19 @@ public class HostingController
 
         _host = hostBuilder.Build();
 
-        
+
         Console.WriteLine(_host);
     }
-    public async     Task
-StartHosting()
+    public async Task StartHosting()
     {
         await _host.StartAsync();
     }
+
+    public void DisposeHost()
+    {
+        // Check if host is null if its not null it will dispose the host
+        _host?.Dispose();
+        
+    }
+
 }

@@ -1,4 +1,4 @@
-﻿using DesktopHostingClient.Controller;
+﻿using DesktopHostingClient.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.SignalR.Client;
+using DesktopHostingClient.Model;
 
 namespace TestDesktopHostingClient;
 
@@ -15,11 +16,11 @@ public class GameHostingWithIp
     public void TestGetSignalRConnection()
     {
         //Arrange 
-        HostingController hostingController = new HostingController();
+        HostingManager hostingManager = new HostingManager();
         //Act
-        hostingController.SetupSignalRHost();
+        hostingManager.SetupSignalRHost();
 
-        hostingController.StartHosting().Wait();
+        hostingManager.StartHosting().Wait();
 
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
@@ -30,27 +31,37 @@ public class GameHostingWithIp
         //Assert
         Assert.Equal(HubConnectionState.Connected, connection.State);
 
-
+        hostingManager.DisposeHost();
+        connection.DisposeAsync();
     }
-    public void TestGetGameRefrence()
+
+    [Fact]
+    public void TestGetGameReference()
     {
         //Arrange
-        GameDataController gameDataController = GameDataController.GetInstance();
-        HostingController hostingController = new HostingController();
+        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        HostingManager hostingManager = new HostingManager();
         
         //Act
-        hostingController.SetupSignalRHost();
+        hostingManager.SetupSignalRHost();
 
-        hostingController.StartHosting().Wait();
+        hostingManager.StartHosting().Wait();
 
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
         connection.StartAsync().Wait();
-        gameDataController.CreateGameData();
+        gameDataManager.CreateGameData();
 
+        Task<GameData> gameDataTask = connection.InvokeAsync<GameData>("GetCurrentGameData");
+        gameDataTask.Wait();
+        GameData gameData = gameDataTask.Result;
 
         //Assert
+        Assert.NotNull(gameData);
+
+        hostingManager.DisposeHost();
+        connection.DisposeAsync();
     }
 
 }

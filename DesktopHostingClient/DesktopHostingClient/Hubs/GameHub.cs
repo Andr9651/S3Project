@@ -1,4 +1,5 @@
-﻿using DesktopHostingClient.Controller;
+﻿using DesktopHostingClient.Managers;
+using DesktopHostingClient.Model;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DesktopHostingClient.Hubs;
@@ -6,13 +7,18 @@ namespace DesktopHostingClient.Hubs;
 
 public class GameHub : Hub
 {
-    public GameDataController GameDataController { get; set; }
+    public GameDataManager GameDataManager { get; set; }
 
     public GameHub()
     {
-            GameDataController =  GameDataController.GetInstance();
+            GameDataManager =  GameDataManager.GetInstance();
 
     }
+
+    public GameData? GetCurrentGameData()
+    {
+        return GameDataManager.GameData;
+    } 
 
 
 

@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using DesktopHostingClient.Controller;
+using DesktopHostingClient.Managers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
@@ -25,18 +25,18 @@ namespace DesktopHostingClient;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public HostingController HostingController { get; set; }
-    public GameDataController GameDataController { get; set; }
+    public HostingManager HostingManager { get; set; }
+    public GameDataManager GameDataManager { get; set; }
 
     public MainWindow()
     {
         InitializeComponent();
-        GameDataController = new GameDataController();
-        HostingController = new HostingController();
+        GameDataManager = GameDataManager.GetInstance();
+        HostingManager = new HostingManager();
     }
 
     private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
     {
-        GameDataController.CreateGameData();
+        GameDataManager.CreateGameData();
     }
 }

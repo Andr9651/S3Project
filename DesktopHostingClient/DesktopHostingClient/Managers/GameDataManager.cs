@@ -5,23 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using DesktopHostingClient.Model;
 
-namespace DesktopHostingClient.Controller;
+namespace DesktopHostingClient.Managers;
 
-public class GameDataController
+public class GameDataManager
 {
     public GameData? GameData { get; private set; }
-    private static GameDataController _instance;
+    private static GameDataManager _instance;
 
-    private GameDataController()
+    private GameDataManager()
     {
 
     }
 
-    public static GameDataController GetInstance()
+    public static GameDataManager GetInstance()
     {
         if (_instance is null)
         {
-            _instance = new GameDataController();
+            _instance = new GameDataManager();
         }
 
         return _instance;
