@@ -15,7 +15,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonNewGame" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Margin="23,52,0,0" Width="104" Click="ButtonNewGame_Click"/>
+        <Button x:Name="ButtonNewGame" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Margin="23,50,0,0" Width="104" Click="ButtonNewGame_Click"/>
 
     </Grid>
 </Window>
