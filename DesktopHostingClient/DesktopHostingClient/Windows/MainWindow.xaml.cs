@@ -35,5 +35,6 @@ public partial class MainWindow : Window
     {
         HostingWindow hostingWindow = new HostingWindow();
         hostingWindow.Show();
+        this.Close();
     }
 }

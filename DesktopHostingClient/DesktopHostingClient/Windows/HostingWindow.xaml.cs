@@ -24,6 +24,11 @@ public partial class HostingWindow : Window
     {
         InitializeComponent();
         GameDataManager = GameDataManager.GetInstance();
-        HostingManager = new HostingManager();    
+        HostingManager = new HostingManager();
+
+        Task<string> ipTask = HostingManager.GetPublicIP();
+        ipTask.Wait();
+        
+        LabelIPAdress.Content = ipTask.Result;
     }
 }

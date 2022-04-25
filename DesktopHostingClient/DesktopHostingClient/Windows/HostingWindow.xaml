@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="Window1" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Margin="35,94,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
         <Button x:Name="Stop_Game" Content="StopGame" HorizontalAlignment="Left" Margin="35,136,0,0" VerticalAlignment="Top"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="185,85,0,0" VerticalAlignment="Top"/>
+        <Label Content="Public IPAdress" HorizontalAlignment="Left" Margin="185,85,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelIPAdress" Content="xxx.xxx.xxx.xxx:xxx" HorizontalAlignment="Left" Margin="46,85,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
