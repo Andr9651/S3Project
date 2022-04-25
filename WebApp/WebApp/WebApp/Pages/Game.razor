@@ -1,0 +1,21 @@
+﻿@page "/Game"
+@page "/Game/{ip}"
+
+
+<h3>Game</h3>
+
+<p role="status">Current count: @ip</p>
+
+<button class="btn btn-primary">Click me</button>
+
+@code {
+    [Parameter]
+    public string ip { get; set; }
+
+
+
+
+
+
+
+}

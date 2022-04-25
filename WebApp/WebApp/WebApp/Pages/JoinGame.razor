@@ -1,0 +1,42 @@
+﻿@page "/JoinGame"
+@using System.Text.RegularExpressions
+@inject NavigationManager navManager
+
+<h3>
+    JoinGame
+</h3>
+
+<input @bind-value="@ip" />
+<button @onclick="ButtonJoinGame">
+    Join Game
+</button>
+@if (!String.IsNullOrEmpty(error))
+{
+    <p>
+        @error
+    </p>
+
+}
+
+@code {
+
+    private string ip;
+    private string error;
+
+    public void ButtonJoinGame()
+    {
+        Regex regex = new Regex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,5}$");
+        if (regex.IsMatch(ip))
+        {
+            navManager.NavigateTo($"/Game/{ip}");
+
+
+        }
+        else
+        {
+            error = " wrong ip, you suck";
+        }
+
+    }
+
+}
