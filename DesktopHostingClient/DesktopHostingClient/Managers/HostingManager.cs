@@ -16,6 +16,19 @@ namespace DesktopHostingClient.Managers;
 public class HostingManager
 {
     private IHost _host;
+    private string _port;
+    
+
+    public string Port
+    {
+        get { return _port; }
+        set { _port = value; }
+    }
+
+    public HostingManager()
+    {
+        _port = "5100";
+    }
 
     public void SetupSignalRHost()
     {
@@ -36,7 +49,7 @@ public class HostingManager
 
         Action<IWebHostBuilder> webHostBuilder = webBuilder =>
         {
-            webBuilder.UseUrls("http://localhost:5100");
+            webBuilder.UseUrls($"http://localhost:{_port}");
             webBuilder.ConfigureServices(serviceCollection);
             webBuilder.Configure(applicationBuilder);
 

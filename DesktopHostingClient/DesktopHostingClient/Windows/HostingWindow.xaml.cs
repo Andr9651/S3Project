@@ -26,9 +26,27 @@ public partial class HostingWindow : Window
         GameDataManager = GameDataManager.GetInstance();
         HostingManager = new HostingManager();
 
-        Task<string> ipTask = HostingManager.GetPublicIP();
-        ipTask.Wait();
         
-        LabelIPAdress.Content = ipTask.Result;
+    }
+
+    private async void OnLoad(object sender, RoutedEventArgs e)
+    {
+        LabelIPAdress.Content = await HostingManager.GetPublicIP();
+        HostingManager.SetupSignalRHost();
+        await HostingManager.StartHosting();
+        LabelPort.Content = HostingManager.Port;
+    }
+
+    private void OnClose(object sender, EventArgs e)
+    {
+        HostingManager.DisposeHost();
+    }
+
+    private void Stop_Game_Click(object sender, RoutedEventArgs e)
+    {
+        MainWindow mainWindow = new MainWindow();
+        mainWindow.Show();  
+        this.Close();
+
     }
 }
