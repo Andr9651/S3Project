@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using DesktopHostingClient.Windows;
 
 namespace DesktopHostingClient;
 
@@ -25,18 +26,14 @@ namespace DesktopHostingClient;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public HostingManager HostingManager { get; set; }
-    public GameDataManager GameDataManager { get; set; }
-
     public MainWindow()
     {
         InitializeComponent();
-        GameDataManager = GameDataManager.GetInstance();
-        HostingManager = new HostingManager();
     }
 
     private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
     {
-        GameDataManager.CreateGameData();
+        HostingWindow hostingWindow = new HostingWindow();
+        hostingWindow.Show();
     }
 }

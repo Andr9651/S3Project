@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
 
 namespace DesktopHostingClient.Managers;
 
@@ -37,6 +39,7 @@ public class HostingManager
             webBuilder.UseUrls("http://localhost:5100");
             webBuilder.ConfigureServices(serviceCollection);
             webBuilder.Configure(applicationBuilder);
+
         };
 
         hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
@@ -55,7 +58,16 @@ public class HostingManager
     {
         // Check if host is null if its not null it will dispose the host
         _host?.Dispose();
+
+    }
+
+    public async Task<string> GetPublicIP()
+    {
+        HttpClient client = new HttpClient();
+
+        string ip = await client.GetStringAsync("http://api.ipify.org");
         
+        return ip; 
     }
 
 }
