@@ -1,5 +1,6 @@
 using Xunit;
 using WebApp.Managers;
+using System;
 
 namespace TestWebApp;
 public class TestJoinGame
@@ -30,4 +31,23 @@ public class TestJoinGame
         //Assert
         Assert.Equal(expected, result);
     }
+    [Fact]
+    public void TestServerPing()
+    {
+        //Arrange
+        GameManager gameManager = new GameManager();
+        //Act
+        gameManager.ConnectToGame("127.0.0.1:5100");
+
+        bool receivedPong = false;
+        Action pongAction = () => { receivedPong = true; };
+        gameManager.PongEvent += pongAction;
+
+        gameManager.PingServer();
+
+        //Assert
+
+        Assert.True(receivedPong);
+    }
+
 }
