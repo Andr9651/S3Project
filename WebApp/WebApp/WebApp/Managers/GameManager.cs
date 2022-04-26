@@ -9,7 +9,7 @@ public class GameManager
     public void ConnectToGame(string ip)
     {
         HubConnectionBuilder builder = new HubConnectionBuilder();
-        builder.WithUrl(ip + "/GameHub");
+        builder.WithUrl("http://" + ip + "/GameHub");
         _connection = builder.Build();
         _connection.On("Pong", Pong);
         _connection.StartAsync().Wait();

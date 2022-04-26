@@ -1,6 +1,7 @@
 using Xunit;
 using WebApp.Managers;
 using System;
+using System.Threading;
 
 namespace TestWebApp;
 public class TestJoinGame
@@ -44,6 +45,8 @@ public class TestJoinGame
         gameManager.PongEvent += pongAction;
 
         gameManager.PingServer();
+
+        Thread.Sleep(500);
 
         //Assert
 
