@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DesktopHostingClient.Managers;
 
@@ -17,7 +18,7 @@ public class HostingManager
 {
     private IHost _host;
     private string _port;
-    
+    private IHubContext <GameHub> _hubContext;
 
     public string Port
     {
@@ -28,6 +29,13 @@ public class HostingManager
     public HostingManager()
     {
         _port = "5100";
+        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        gameDataManager.OnBalanceChanged += PushBalanceToClient;
+    }
+
+    public void PushBalanceToClient(int balance)
+    {
+        _hubContext.Clients.All.SendAsync("BalanceUpdate", balance);
     }
 
     public void SetupSignalRHost()
@@ -65,6 +73,8 @@ public class HostingManager
     public async Task StartHosting()
     {
         await _host.StartAsync();
+
+        _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }
 
     public void DisposeHost()

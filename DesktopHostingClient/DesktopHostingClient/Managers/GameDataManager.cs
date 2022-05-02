@@ -12,7 +12,7 @@ public class GameDataManager
     public bool HasGameData { get { return GameData is not null; } }
     private GameData? GameData { get; set; }
     private static GameDataManager _instance;
-
+    public event Action<int> OnBalanceChanged;
 
     private GameDataManager()
     {
