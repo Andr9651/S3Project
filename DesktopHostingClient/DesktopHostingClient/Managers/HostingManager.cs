@@ -47,10 +47,18 @@ public class HostingManager
         Action<IServiceCollection> serviceCollection = services =>
         {
             services.AddSignalR();
+            services.AddCors(services =>
+            {
+                services.AddPolicy("test", (policy) =>
+                {
+                    policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                });
+            });
         };
 
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
+            app.UseCors("test");
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
@@ -66,6 +74,7 @@ public class HostingManager
         hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
 
         _host = hostBuilder.Build();
+        
 
 
         Console.WriteLine(_host);
