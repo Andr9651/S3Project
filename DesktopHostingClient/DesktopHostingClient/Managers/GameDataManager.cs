@@ -29,6 +29,11 @@ public class GameDataManager
         return _instance;
     }
 
+    public void NotifyBalanceChanged()
+    {
+        OnBalanceChanged.Invoke(GameData.Balance);
+    }
+
     public void CreateGameData()
     {
         GameData = new GameData();
@@ -40,7 +45,7 @@ public class GameDataManager
         {
             return GameData.Balance;
         }
-        
+
     }
 
     private void SetBalance(int newBalance)
