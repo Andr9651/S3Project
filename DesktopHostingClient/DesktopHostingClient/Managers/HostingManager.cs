@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace DesktopHostingClient.Managers;
 
@@ -18,7 +19,7 @@ public class HostingManager
 {
     private IHost _host;
     private string _port;
-    private IHubContext <GameHub> _hubContext;
+    private IHubContext<GameHub> _hubContext;
 
     public string Port
     {
@@ -54,11 +55,14 @@ public class HostingManager
                     policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
                 });
             });
+            services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
+    .AddCertificate();
         };
 
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
             app.UseCors("test");
+            app.UseAuthentication();
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
@@ -74,7 +78,7 @@ public class HostingManager
         hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
 
         _host = hostBuilder.Build();
-        
+
 
 
         Console.WriteLine(_host);
@@ -98,8 +102,8 @@ public class HostingManager
         HttpClient client = new HttpClient();
 
         string ip = await client.GetStringAsync("http://api.ipify.org");
-        
-        return ip; 
+
+        return ip;
     }
 
 }
