@@ -10,7 +10,7 @@ public class GameManager
     public async Task ConnectToGame(string ip)
     {
         HubConnectionBuilder builder = new HubConnectionBuilder();
-        builder.WithUrl("http://" + ip + "/GameHub");
+        builder.WithUrl("https://" + ip + "/GameHub");
         _connection = builder.Build();
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
