@@ -25,8 +25,6 @@ public partial class HostingWindow : Window
         InitializeComponent();
         GameDataManager = GameDataManager.GetInstance();
         HostingManager = new HostingManager();
-
-        
     }
 
     private async void OnLoad(object sender, RoutedEventArgs e)
@@ -35,6 +33,7 @@ public partial class HostingWindow : Window
         HostingManager.SetupSignalRHost();
         await HostingManager.StartHosting();
         LabelPort.Content = HostingManager.Port;
+        GameDataManager.CreateGameData();
     }
 
     private void OnClose(object sender, EventArgs e)
@@ -47,6 +46,5 @@ public partial class HostingWindow : Window
         MainWindow mainWindow = new MainWindow();
         mainWindow.Show();  
         this.Close();
-
     }
 }

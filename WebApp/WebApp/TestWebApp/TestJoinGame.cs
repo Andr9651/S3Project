@@ -32,6 +32,7 @@ public class TestJoinGame
         //Assert
         Assert.Equal(expected, result);
     }
+
     [Fact]
     public void TestServerPing()
     {
