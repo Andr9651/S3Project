@@ -9,8 +9,10 @@ namespace DesktopHostingClient.Managers;
 
 public class GameDataManager
 {
-    public GameData? GameData { get; private set; }
+    public bool HasGameData { get { return GameData is not null; } }
+    private GameData? GameData { get; set; }
     private static GameDataManager _instance;
+
 
     private GameDataManager()
     {
@@ -30,6 +32,24 @@ public class GameDataManager
     public void CreateGameData()
     {
         GameData = new GameData();
+    }
+
+    public int GetBalance()
+    {
+        lock (GameData)
+        {
+            return GameData.Balance;
+        }
+        
+    }
+
+    private void SetBalance(int newBalance)
+    {
+        lock (GameData)
+        {
+            GameData.Balance = newBalance;
+        }
+
     }
 
 }

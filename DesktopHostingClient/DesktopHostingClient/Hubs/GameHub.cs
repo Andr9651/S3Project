@@ -15,9 +15,9 @@ public class GameHub : Hub
 
     }
 
-    public GameData? GetCurrentGameData()
+    public bool HasGame()
     {
-        return GameDataManager.GameData;
+        return GameDataManager.HasGameData;
     } 
 
     public void Ping()
