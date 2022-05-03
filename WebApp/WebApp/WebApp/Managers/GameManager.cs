@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
- 
+
 namespace WebApp.Managers;
 public class GameManager
 {
@@ -9,13 +9,21 @@ public class GameManager
 
     public async Task ConnectToGame(string ip)
     {
+        if (_connection is not null)
+        {
+            await CloseConnection();
+        }
+
         HubConnectionBuilder builder = new HubConnectionBuilder();
-        builder.WithUrl("https://" + ip + "/GameHub");
+        builder.WithUrl("http://" + ip + "/GameHub");
+        builder.WithAutomaticReconnect();
         _connection = builder.Build();
+
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
+
         await _connection.StartAsync();
-        
+
     }
 
     private void BalanceUpdate(int balance)
@@ -23,9 +31,10 @@ public class GameManager
         BalanceUpdateEvent(balance);
     }
 
-    public void CloseConnection()
+    public async Task CloseConnection()
     {
-        _connection.StopAsync().Wait();
+        await _connection.StopAsync();
+        await _connection.DisposeAsync();
     }
 
     public void PingServer()
