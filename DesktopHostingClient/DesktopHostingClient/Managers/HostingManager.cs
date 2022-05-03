@@ -55,14 +55,12 @@ public class HostingManager
                     policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
                 });
             });
-            services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
-    .AddCertificate();
         };
 
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
             app.UseCors("test");
-            app.UseAuthentication();
+
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
