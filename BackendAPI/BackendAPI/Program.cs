@@ -1,7 +1,3 @@
-
-
-
-
 using BackendAPI.Model;
 using Dapper;
 using System.Data.SqlClient;
