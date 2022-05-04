@@ -46,8 +46,36 @@ namespace TestBackendAPI
                     int rowsDeleted = connection.Execute(sqlDelete, purchasable);
                     Assert.True(rowsDeleted > 0);
                 }
+
             }
         }
+        [Fact]
+        public void TestGameInstanceDto()
+        {
+            //arrange
+            string connectionString = "Data Source=.;Initial Catalog=CookieClicker;Integrated Security=True";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                //act
+                //start with test insert
+                GameInstanceDto gameInstanceDto = new GameInstanceDto
+                {
+                    Balance = 1,
+                    Ip = "Jeg er ikke en ip"
+                };
+                string sqlInsert = "insert into GameInstance(balance, hostIp) values (@Balance, @Ip)";
+                int rowsInserted = connection.Execute(sqlInsert, gameInstanceDto);
+                //assert
+                Assert.Equal(1, rowsInserted);
+                if (rowsInserted >= 1)
+                {
+                    //testDelete
+                    string sqlDelete = "delete from GameInstance where hostIp = @Ip";
+                    int rowsDeleted = connection.Execute(sqlDelete, gameInstanceDto);
+                    Assert.True(rowsDeleted > 0);
+                }
 
+            }
+        }
     }
 }
