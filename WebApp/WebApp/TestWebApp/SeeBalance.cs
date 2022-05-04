@@ -29,4 +29,26 @@ public class SeeBalance
         //Assert
         Assert.True(receivedUpdate);
     }
+    [Fact]
+    public void TestGetBalanceValue()
+    {
+        //Arrange 
+        GameManager gameManager = new GameManager();
+
+        //Act 
+        gameManager.ConnectToGame("127.0.0.1:5100");
+       
+        int balance = 0;
+        gameManager.BalanceUpdateEvent += (newBalance) =>
+        {
+            balance = newBalance;
+        };
+        int oldBalance = balance;
+        Thread.Sleep(1003);
+
+        //Assert
+        Assert.True(oldBalance < balance);
+       
+
+    }
 }

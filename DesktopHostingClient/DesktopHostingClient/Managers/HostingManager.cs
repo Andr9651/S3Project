@@ -84,6 +84,8 @@ public class HostingManager
     public async Task StartHosting()
     {
         await _host.StartAsync();
+        GameDataManager gameDataManager =  GameDataManager.GetInstance();
+        gameDataManager.StartBalanceUpdateThread();
 
         _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }
@@ -92,6 +94,8 @@ public class HostingManager
     {
         // Check if host is null if its not null it will dispose the host
         _host?.Dispose();
+        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        gameDataManager.StopBalanceUpdateThread();
 
     }
 
