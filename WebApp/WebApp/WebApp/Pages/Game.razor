@@ -7,7 +7,7 @@
 
 <p role="status">Ip: @ip</p>
 
-<p role="status">Current count: @balance</p>
+<p role="status">Balance: @balance</p>
 
 
 <button class="btn btn-primary" @onclick="@StartConnection">Click me</button>
@@ -40,7 +40,7 @@
 
         gameManager.BalanceUpdateEvent += (balance) =>
         {
-            this.balance = balance + 10;
+            this.balance = balance;
             InvokeAsync(StateHasChanged);
         };
 

@@ -15,7 +15,15 @@ public class GameDataManager
     private static GameDataManager _instance;
     public event Action<int> OnBalanceChanged;
     private Thread incrementBalanceThread;
+    private volatile bool _isRunning;
 
+    public bool IsUpdateThreadRunning
+    {
+        get { return _isRunning; }
+        private set { _isRunning = value; }
+    }
+
+   
     private GameDataManager()
     {
 
@@ -33,20 +41,27 @@ public class GameDataManager
 
     public void StartBalanceUpdateThread()
     {
+        IsUpdateThreadRunning = true;
         incrementBalanceThread = new Thread(() =>
         {
-            while (true)
+            while (IsUpdateThreadRunning)
             {
                 SetBalance(GetBalance() + 1);
                 NotifyBalanceChanged();
                 Thread.Sleep(1000);
             }
         });
+        incrementBalanceThread.Start();
+    }
+    public void StopBalanceUpdateThread()
+    {
+        IsUpdateThreadRunning = false;
+        incrementBalanceThread?.Join();
     }
 
     public void NotifyBalanceChanged()
     {
-        OnBalanceChanged.Invoke(GameData.Balance);
+        OnBalanceChanged?.Invoke(GameData.Balance);
     }
 
     public void CreateGameData()

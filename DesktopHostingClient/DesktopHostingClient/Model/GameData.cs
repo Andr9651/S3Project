@@ -10,7 +10,15 @@ namespace DesktopHostingClient.Model
     {
 
         public int Id { get; set; }
-        public int Balance { get; set; }
+       
+        private  int _balance;
+
+        public int Balance
+        {
+            get { return _balance; }
+            set { _balance = value; }
+        }
+
         public string IP { get; set; }
         public Dictionary<int,int> Purchases { get; set; }
 
