@@ -1,21 +1,54 @@
 ﻿@page "/Game"
 @page "/Game/{ip}"
+@using WebApp.Managers
 
 
 <h3>Game</h3>
 
-<p role="status">Current count: @ip</p>
+<p role="status">Ip: @ip</p>
 
-<button class="btn btn-primary">Click me</button>
+<p role="status">Balance: @balance</p>
+
+
+<button class="btn btn-primary" @onclick="@StartConnection">Click me</button>
+<button class="btn btn-primary" @onclick="@Ping">Ping</button>
 
 @code {
+
+
     [Parameter]
     public string ip { get; set; }
 
+    public int balance { get; set; } = 0;
 
+    GameManager gameManager = new GameManager();
 
+    private async Task StartConnection()
+    {
+        await gameManager.ConnectToGame(ip);
+    }
 
+    private void Ping()
+    {
+        gameManager.PingServer();
+        ip = "ping";
+    }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
+        gameManager.BalanceUpdateEvent += (balance) =>
+        {
+            this.balance = balance;
+            InvokeAsync(StateHasChanged);
+        };
 
+        gameManager.PongEvent += () =>
+        {
+            ip = "Pong";
+            InvokeAsync(StateHasChanged);
+        };
+
+    }
 }

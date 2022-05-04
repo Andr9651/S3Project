@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace DesktopHostingClient.Managers;
 
@@ -17,7 +19,7 @@ public class HostingManager
 {
     private IHost _host;
     private string _port;
-    
+    private IHubContext<GameHub> _hubContext;
 
     public string Port
     {
@@ -28,6 +30,13 @@ public class HostingManager
     public HostingManager()
     {
         _port = "5100";
+        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        gameDataManager.OnBalanceChanged += PushBalanceToClient;
+    }
+
+    public void PushBalanceToClient(int balance)
+    {
+        _hubContext.Clients.All.SendAsync("BalanceUpdate", balance);
     }
 
     public void SetupSignalRHost()
@@ -39,10 +48,19 @@ public class HostingManager
         Action<IServiceCollection> serviceCollection = services =>
         {
             services.AddSignalR();
+            services.AddCors(services =>
+            {
+                services.AddPolicy("test", (policy) =>
+                {
+                    policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                });
+            });
         };
 
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
+            app.UseCors("test");
+
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
@@ -60,17 +78,24 @@ public class HostingManager
         _host = hostBuilder.Build();
 
 
+
         Console.WriteLine(_host);
     }
     public async Task StartHosting()
     {
         await _host.StartAsync();
+        GameDataManager gameDataManager =  GameDataManager.GetInstance();
+        gameDataManager.StartBalanceUpdateThread();
+
+        _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }
 
     public void DisposeHost()
     {
         // Check if host is null if its not null it will dispose the host
         _host?.Dispose();
+        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        gameDataManager.StopBalanceUpdateThread();
 
     }
 
@@ -79,8 +104,8 @@ public class HostingManager
         HttpClient client = new HttpClient();
 
         string ip = await client.GetStringAsync("http://api.ipify.org");
-        
-        return ip; 
+
+        return ip;
     }
 
 }

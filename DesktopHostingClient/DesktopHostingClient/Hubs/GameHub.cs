@@ -1,6 +1,7 @@
 ﻿using DesktopHostingClient.Managers;
 using DesktopHostingClient.Model;
 using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
 
 namespace DesktopHostingClient.Hubs;
 
@@ -15,9 +16,9 @@ public class GameHub : Hub
 
     }
 
-    public GameData? GetCurrentGameData()
+    public bool HasGame()
     {
-        return GameDataManager.GameData;
+        return GameDataManager.HasGameData;
     } 
 
     public void Ping()
@@ -25,4 +26,8 @@ public class GameHub : Hub
         Clients.Caller.SendAsync("Pong");
     }
 
+    public override async Task OnConnectedAsync ()
+    {
+        GameDataManager.NotifyBalanceChanged();
+    }
 }

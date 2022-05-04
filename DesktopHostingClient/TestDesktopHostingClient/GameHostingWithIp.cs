@@ -51,12 +51,12 @@ public class GameHostingWithIp : IDisposable
         connection.StartAsync().Wait();
         gameDataManager.CreateGameData();
 
-        Task<GameData> gameDataTask = connection.InvokeAsync<GameData>("GetCurrentGameData");
+        Task<bool> gameDataTask = connection.InvokeAsync<bool>("HasGame");
         gameDataTask.Wait();
-        GameData gameData = gameDataTask.Result;
+        bool gameData = gameDataTask.Result;
 
         //Assert
-        Assert.NotNull(gameData);
+        Assert.True(gameData);
 
         connection.DisposeAsync();
     }
