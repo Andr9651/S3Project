@@ -2,6 +2,8 @@
 using DesktopHostingClient.Model;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DesktopHostingClient.Hubs;
 
@@ -29,5 +31,7 @@ public class GameHub : Hub
     public override async Task OnConnectedAsync ()
     {
         GameDataManager.NotifyBalanceChanged();
+        List<Purchasable> purchasables = GameDataManager.Purchasables.Values.ToList<Purchasable>();
+        Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
     }
 }

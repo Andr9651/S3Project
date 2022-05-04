@@ -29,7 +29,7 @@ public partial class HostingWindow : Window
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        GameDataManager.CreateGameData();
+        await GameDataManager.HostingStartUp();
         LabelIPAdress.Content = await HostingManager.GetPublicIP();
         HostingManager.SetupSignalRHost();
         await HostingManager.StartHosting();

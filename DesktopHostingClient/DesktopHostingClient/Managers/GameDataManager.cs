@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DesktopHostingClient.Model;
 using System.Threading;
+using DesktopHostingClient.Service;
 
 namespace DesktopHostingClient.Managers;
 
@@ -16,7 +17,7 @@ public class GameDataManager
     public event Action<int> OnBalanceChanged;
     private Thread incrementBalanceThread;
     private volatile bool _isRunning;
-
+    public Dictionary<int,Purchasable> Purchasables { get; private set; }
     public bool IsUpdateThreadRunning
     {
         get { return _isRunning; }
@@ -86,5 +87,16 @@ public class GameDataManager
         }
 
     }
+    public async Task HostingStartUp()
+    {
+        PurchasableService purchasableService = new PurchasableService();
+        List<Purchasable> purchasables  = await purchasableService.GetPurchasables();
 
+        Purchasables = purchasables.ToDictionary(
+            keySelector: purchasable => purchasable.Id,
+            elementSelector: purchasable => purchasable);
+
+        CreateGameData();
+
+    }
 }
