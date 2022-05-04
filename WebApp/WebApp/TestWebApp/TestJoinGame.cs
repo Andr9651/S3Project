@@ -17,7 +17,7 @@ public class TestJoinGame
 
         //Act
         bool result = JoinGameManager.ValidateIP(ip);
-        //Assert
+        //Assert   
         Assert.Equal(expected, result);
     }
 
@@ -32,6 +32,7 @@ public class TestJoinGame
         //Assert
         Assert.Equal(expected, result);
     }
+
     [Fact]
     public void TestServerPing()
     {
