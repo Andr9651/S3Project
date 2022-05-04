@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using static WebApp.Model.Purchasables;
 
 namespace WebApp.Managers;
 public class GameManager
@@ -6,6 +7,7 @@ public class GameManager
     private HubConnection _connection;
     public event Action PongEvent;
     public event Action<int> BalanceUpdateEvent;
+    public event Action<List<Purchasable>> ReceivePurchasablesEvent;
 
     public async Task ConnectToGame(string ip)
     {
@@ -46,5 +48,9 @@ public class GameManager
     {
         PongEvent.Invoke();
     }
+    private void ReceivePurchasables(List<Purchasable> purchasables)
+    {
+        ReceivePurchasablesEvent(purchasables);
 
+    }
 }

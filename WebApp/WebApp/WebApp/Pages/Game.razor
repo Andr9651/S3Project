@@ -1,6 +1,7 @@
 ﻿@page "/Game"
 @page "/Game/{ip}"
 @using WebApp.Managers
+@using static WebApp.Model.Purchasables
 
 
 <h3>Game</h3>
@@ -47,6 +48,21 @@
         gameManager.PongEvent += () =>
         {
             ip = "Pong";
+            InvokeAsync(StateHasChanged);
+        };
+
+        gameManager.ReceivePurchasablesEvent += (purchasables) =>
+        {
+
+            foreach (Purchasable p in purchasables)
+            {
+                <button>
+                @p.Name
+                </button>
+
+
+            }
+
             InvokeAsync(StateHasChanged);
         };
 
