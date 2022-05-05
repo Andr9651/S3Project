@@ -9,32 +9,64 @@ using DesktopHostingClient.Service;
 
 namespace DesktopHostingClient.Managers;
 
-public class GameDataManager
+/// <summary>
+/// The <c>GameManager</c> manages the gamestate.
+/// <br/>
+/// The Class is a singleton and instances must be aquired through GetInstance()
+/// <br/>
+/// This includes loading and saving GameData and managing game update loops.
+/// </summary>
+public class GameManager
 {
-    public bool HasGameData { get { return GameData is not null; } }
-    private GameData? GameData { get; set; }
-    private static GameDataManager _instance;
-    public event Action<int> OnBalanceChanged;
-    private Thread incrementBalanceThread;
-    private volatile bool _isRunning;
+    /// <value>
+    /// True if a GameData instance is present
+    /// </value>
+    public bool HasGameData { 
+        get { return (GameData is not null);} 
+    }
+
+    /// <summary>
+    /// Dictionary of available purchasable objects
+    /// <br/>
+    /// Key: Purchasable.Id
+    /// <br/>
+    /// Value: Purchasable
+    /// </summary>
     public Dictionary<int,Purchasable> Purchasables { get; set; }
+
     public bool IsUpdateThreadRunning
     {
         get { return _isRunning; }
         private set { _isRunning = value; }
     }
 
+    /// <summary>
+    /// This event is triggered when the GameDataBalance is updated
+    /// <br/>
+    /// Returns the updated balance when invoked
+    /// </summary>
+    public event Action<int> OnBalanceChanged;
+    
+    private GameData? GameData { get; set; }
+    private static GameManager _instance;
+    private Thread incrementBalanceThread;
+    private volatile bool _isRunning;
+
    
-    private GameDataManager()
+    private GameManager()
     {
 
     }
 
-    public static GameDataManager GetInstance()
+    /// <summary>
+    /// Creates a GameManager if it has not been instatiated
+    /// </summary>
+    /// <returns> The only GameManager instance</returns>
+    public static GameManager GetInstance()
     {
         if (_instance is null)
         {
-            _instance = new GameDataManager();
+            _instance = new GameManager();
         }
 
         return _instance;
@@ -42,7 +74,13 @@ public class GameDataManager
 
     public void StartBalanceUpdateThread()
     {
+        if (IsUpdateThreadRunning)
+        {
+            throw new InvalidOperationException("UpdateBalanceThread is already Running");
+        }
+
         IsUpdateThreadRunning = true;
+
         incrementBalanceThread = new Thread(() =>
         {
             while (IsUpdateThreadRunning)
@@ -52,8 +90,10 @@ public class GameDataManager
                 Thread.Sleep(1000);
             }
         });
+
         incrementBalanceThread.Start();
     }
+
     public void StopBalanceUpdateThread()
     {
         IsUpdateThreadRunning = false;
@@ -77,24 +117,7 @@ public class GameDataManager
         }
     }
 
-    public int GetBalance()
-    {
-        lock (GameData)
-        {
-            return GameData.Balance;
-        }
-
-    }
-
-    private void SetBalance(int newBalance)
-    {
-        lock (GameData)
-        {
-            GameData.Balance = newBalance;
-        }
-
-    }
-    public async Task HostingStartUp()
+    public async Task SetupGame()
     {
         PurchasableService purchasableService = new PurchasableService();
         List<Purchasable> purchasables  = await purchasableService.GetPurchasables();
@@ -104,6 +127,29 @@ public class GameDataManager
             elementSelector: purchasable => purchasable);
 
         CreateGameData();
+
+        StartBalanceUpdateThread();
+    }
+
+    public void ShutdownGame()
+    {
+        StopBalanceUpdateThread();
+    }
+
+    public int GetBalance()
+    {
+        lock (GameData)
+        {
+            return GameData.Balance;
+        }
+    }
+
+    private void SetBalance(int newBalance)
+    {
+        lock (GameData)
+        {
+            GameData.Balance = newBalance;
+        }
     }
 
     public bool TryBuyBuilding(int purchasableId)

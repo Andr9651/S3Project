@@ -6,13 +6,13 @@ using System.Threading;
 
 namespace TestDesktopHostingClient;
 
-public class CreateNewGameInstance
+public class TestCreateNewGameInstance
 {
     [Fact]
     public void TestCreateGame()
     {
         //Arrange
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
 
         //Act
         gameDataManager.CreateGameData();
@@ -24,7 +24,7 @@ public class CreateNewGameInstance
     public void TestGetBalance()
     {
         //Arrange
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
 
         //Act
         gameDataManager.CreateGameData();
@@ -36,7 +36,7 @@ public class CreateNewGameInstance
     public void TestStartBalanceUpdateThread()
     {
         //Arrange 
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
         gameDataManager.CreateGameData();
 
         //Act 

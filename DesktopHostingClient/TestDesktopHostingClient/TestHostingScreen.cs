@@ -9,7 +9,7 @@ using Xunit;
 
 namespace TestDesktopHostingClient;
 
-public class HostingScreen
+public class TestHostingScreen
 {
     [Fact]
     public async void TestGetHostIp ()

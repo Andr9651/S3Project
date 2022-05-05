@@ -10,10 +10,10 @@ using DesktopHostingClient.Model;
 
 namespace TestDesktopHostingClient;
 
-public class GameHostingWithIp : IDisposable
+public class TestGameHostingWithIp : IDisposable
 {
     private HostingManager _hostingManager;
-    public GameHostingWithIp()
+    public TestGameHostingWithIp()
     {
         _hostingManager = new HostingManager();
         _hostingManager.SetupSignalRHost();
@@ -42,7 +42,7 @@ public class GameHostingWithIp : IDisposable
     public void TestGetGameReference()
     {
         //Arrange
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
 
         //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();

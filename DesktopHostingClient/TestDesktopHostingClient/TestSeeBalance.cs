@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.SignalR.Client;
 using System.Threading;
 namespace TestDesktopHostingClient;
 
-public class SeeBalance
+public class TestSeeBalance
 {
     [Fact]
     public void TestReciveBalanceUpdate()
     {
         // Arrange 
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
         gameDataManager.CreateGameData();
         HostingManager hostingManager = new HostingManager();
         hostingManager.SetupSignalRHost();

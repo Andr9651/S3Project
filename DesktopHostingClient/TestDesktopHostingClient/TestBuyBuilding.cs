@@ -38,9 +38,9 @@ public class TestBuyBuilding
     {
 
         // Arrange 
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
 
-        gameDataManager.HostingStartUp();
+        gameDataManager.SetupGame();
         HostingManager hostingManager = new HostingManager();
         hostingManager.SetupSignalRHost();
         hostingManager.StartHosting().Wait();
@@ -68,7 +68,7 @@ public class TestBuyBuilding
     public void TestBuy(int startingBalance, int purchasablePrice, int buyId, bool shouldSucceed)
     {
         // Arrnge
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
+        GameManager gameDataManager = GameManager.GetInstance();
         GameData gameData = new GameData() { 
                 Balance = startingBalance 
         };

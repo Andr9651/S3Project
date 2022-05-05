@@ -10,11 +10,11 @@ namespace DesktopHostingClient.Hubs;
 
 public class GameHub : Hub
 {
-    public GameDataManager GameDataManager { get; set; }
+    public GameManager GameDataManager { get; set; }
 
     public GameHub()
     {
-            GameDataManager =  GameDataManager.GetInstance();
+            GameDataManager =  GameManager.GetInstance();
 
     }
 
