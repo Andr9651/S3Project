@@ -42,14 +42,14 @@ public class TestGameHostingWithIp : IDisposable
     public void TestGetGameReference()
     {
         //Arrange
-        GameManager gameDataManager = GameManager.GetInstance();
+        GameManager gameManager = GameManager.GetInstance();
 
         //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
         connection.StartAsync().Wait();
-        gameDataManager.CreateGameData();
+        gameManager.CreateGameData();
 
         Task<bool> gameDataTask = connection.InvokeAsync<bool>("HasGame");
         gameDataTask.Wait();

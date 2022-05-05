@@ -38,9 +38,9 @@ public class TestBuyBuilding
     {
 
         // Arrange 
-        GameManager gameDataManager = GameManager.GetInstance();
+        GameManager gameManager = GameManager.GetInstance();
 
-        gameDataManager.SetupGame();
+        gameManager.SetupGame();
         HostingManager hostingManager = new HostingManager();
         hostingManager.SetupSignalRHost();
         hostingManager.StartHosting().Wait();
@@ -68,11 +68,11 @@ public class TestBuyBuilding
     public void TestBuy(int startingBalance, int purchasablePrice, int buyId, bool shouldSucceed)
     {
         // Arrnge
-        GameManager gameDataManager = GameManager.GetInstance();
+        GameManager gameManager = GameManager.GetInstance();
         GameData gameData = new GameData() { 
                 Balance = startingBalance 
         };
-        gameDataManager.CreateGameData(gameData);
+        gameManager.CreateGameData(gameData);
 
         Dictionary<int,Purchasable> purchasables = new Dictionary<int,Purchasable>();
         Purchasable purchasable1 = new Purchasable() { 
@@ -82,20 +82,20 @@ public class TestBuyBuilding
         };
 
         purchasables.Add(purchasable1.Id, purchasable1);
-        gameDataManager.Purchasables = purchasables;
+        gameManager.Purchasables = purchasables;
 
         // Act
-        bool isSuccess = gameDataManager.TryBuyBuilding(buyId);
+        bool isSuccess = gameManager.TryBuyBuilding(buyId);
 
         // Assert
         Assert.Equal(shouldSucceed, isSuccess);
         if (shouldSucceed)
         {
-            Assert.Equal(startingBalance - purchasablePrice, gameDataManager.GetBalance());
+            Assert.Equal(startingBalance - purchasablePrice, gameManager.GetBalance());
         }
         else
         {
-            Assert.Equal(startingBalance, gameDataManager.GetBalance());
+            Assert.Equal(startingBalance, gameManager.GetBalance());
         }
 
     }

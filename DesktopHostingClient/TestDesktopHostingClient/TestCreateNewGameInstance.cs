@@ -12,44 +12,44 @@ public class TestCreateNewGameInstance
     public void TestCreateGame()
     {
         //Arrange
-        GameManager gameDataManager = GameManager.GetInstance();
+        GameManager gameManager = GameManager.GetInstance();
 
         //Act
-        gameDataManager.CreateGameData();
+        gameManager.CreateGameData();
 
         //Assert
-        Assert.True(gameDataManager.HasGameData);
+        Assert.True(gameManager.HasGameData);
     }
     [Fact]
     public void TestGetBalance()
     {
         //Arrange
-        GameManager gameDataManager = GameManager.GetInstance();
+        GameManager gameManager = GameManager.GetInstance();
 
         //Act
-        gameDataManager.CreateGameData();
+        gameManager.CreateGameData();
 
         //Assert
-        Assert.Equal(0, gameDataManager.GetBalance());
+        Assert.Equal(0, gameManager.GetBalance());
     }
     [Fact]
     public void TestStartBalanceUpdateThread()
     {
         //Arrange 
-        GameManager gameDataManager = GameManager.GetInstance();
-        gameDataManager.CreateGameData();
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData();
 
         //Act 
-        gameDataManager.StartBalanceUpdateThread();
+        gameManager.StartBalanceUpdateThread();
         Thread.Sleep(1002);
 
-        gameDataManager.StopBalanceUpdateThread();
-        int balance = gameDataManager.GetBalance();
+        gameManager.StopBalanceUpdateThread();
+        int balance = gameManager.GetBalance();
         Thread.Sleep(1002);
 
         //Assert
-        Assert.True(gameDataManager.GetBalance() > 0);
-        Assert.False(gameDataManager.IsUpdateThreadRunning);
-        Assert.Equal(balance, gameDataManager.GetBalance());
+        Assert.True(gameManager.GetBalance() > 0);
+        Assert.False(gameManager.IsUpdateThreadRunning);
+        Assert.Equal(balance, gameManager.GetBalance());
     }
 }

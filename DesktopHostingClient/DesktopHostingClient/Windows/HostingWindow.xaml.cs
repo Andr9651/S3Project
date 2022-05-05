@@ -18,18 +18,18 @@ namespace DesktopHostingClient.Windows;
 public partial class HostingWindow : Window
 {
     public HostingManager HostingManager { get; set; }
-    public GameManager GameDataManager { get; set; }
+    public GameManager GameManager { get; set; }
 
     public HostingWindow()
     {
         InitializeComponent();
-        GameDataManager = GameManager.GetInstance();
+        GameManager = GameManager.GetInstance();
         HostingManager = new HostingManager();
     }
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        await GameDataManager.SetupGame();
+        await GameManager.SetupGame();
 
         LabelIPAdress.Content = await HostingManager.GetPublicIP();
         HostingManager.SetupSignalRHost();
@@ -40,7 +40,7 @@ public partial class HostingWindow : Window
 
     private void OnClose(object sender, EventArgs e)
     {
-        GameDataManager.ShutdownGame();
+        GameManager.ShutdownGame();
         HostingManager.DisposeHost();
     }
 

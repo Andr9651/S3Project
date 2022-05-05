@@ -30,8 +30,8 @@ public class HostingManager
     public HostingManager()
     {
         _port = "5100";
-        GameManager gameDataManager = GameManager.GetInstance();
-        gameDataManager.OnBalanceChanged += PushBalanceToClient;
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.OnBalanceChanged += PushBalanceToClient;
     }
 
     public void PushBalanceToClient(int balance)
@@ -84,7 +84,7 @@ public class HostingManager
     public async Task StartHosting()
     {
         await _host.StartAsync();
-        GameManager gameDataManager =  GameManager.GetInstance();
+        GameManager gameManager =  GameManager.GetInstance();
 
         _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }

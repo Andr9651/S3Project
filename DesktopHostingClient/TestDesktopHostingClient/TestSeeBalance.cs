@@ -15,8 +15,8 @@ public class TestSeeBalance
     public void TestReciveBalanceUpdate()
     {
         // Arrange 
-        GameManager gameDataManager = GameManager.GetInstance();
-        gameDataManager.CreateGameData();
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData();
         HostingManager hostingManager = new HostingManager();
         hostingManager.SetupSignalRHost();
         hostingManager.StartHosting().Wait();
@@ -31,7 +31,7 @@ public class TestSeeBalance
             receivedUpdate = true;
         });
         connection.StartAsync().Wait();
-        gameDataManager.NotifyBalanceChanged();
+        gameManager.NotifyBalanceChanged();
         Thread.Sleep(500);
 
         //Assert

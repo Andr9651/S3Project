@@ -10,28 +10,27 @@ namespace DesktopHostingClient.Hubs;
 
 public class GameHub : Hub
 {
-    public GameManager GameDataManager { get; set; }
+    public GameManager GameManager { get; set; }
 
     public GameHub()
     {
-            GameDataManager =  GameManager.GetInstance();
-
+        GameManager = GameManager.GetInstance();
     }
 
     public bool HasGame()
     {
-        return GameDataManager.HasGameData;
-    } 
+        return GameManager.HasGameData;
+    }
 
     public void Ping()
     {
         Clients.Caller.SendAsync("Pong");
     }
 
-    public override async Task OnConnectedAsync ()
+    public override async Task OnConnectedAsync()
     {
-        GameDataManager.NotifyBalanceChanged();
-        List<Purchasable> purchasables = GameDataManager.Purchasables.Values.ToList<Purchasable>();
+        GameManager.NotifyBalanceChanged();
+        List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
         Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
     }
 }
