@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Net.Http.Json;
 
 namespace DesktopHostingClient.Service;
-
 public class PurchasableService
 {
     public async Task<List<Purchasable>> GetPurchasables()

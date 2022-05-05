@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace DesktopHostingClient.Windows;
-
 public partial class HostingWindow : Window
 {
     public HostingManager HostingManager { get; set; }
@@ -31,11 +30,13 @@ public partial class HostingWindow : Window
     {
         await GameManager.SetupGame();
 
-        LabelIPAdress.Content = await HostingManager.GetPublicIP();
+        LabelIpAddress.Content = await HostingManager.GetPublicIp();
+
         HostingManager.SetupSignalRHost();
+
         await HostingManager.StartHosting();
+
         LabelPort.Content = HostingManager.Port;
-       
     }
 
     private void OnClose(object sender, EventArgs e)
@@ -48,6 +49,7 @@ public partial class HostingWindow : Window
     {
         MainWindow mainWindow = new MainWindow();
         mainWindow.Show();  
+
         this.Close();
     }
 }

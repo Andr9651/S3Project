@@ -14,22 +14,22 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace DesktopHostingClient.Managers;
-
 public class HostingManager
 {
-    private IHost _host;
-    private string _port;
-    private IHubContext<GameHub> _hubContext;
-
     public string Port
     {
         get { return _port; }
         set { _port = value; }
     }
 
+    private IHost _host;
+    private string _port;
+    private IHubContext<GameHub> _hubContext;
+
     public HostingManager()
     {
         _port = "5100";
+
         GameManager gameManager = GameManager.GetInstance();
         gameManager.OnBalanceChanged += PushBalanceToClient;
     }
@@ -60,7 +60,6 @@ public class HostingManager
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
             app.UseCors("test");
-
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
@@ -70,20 +69,17 @@ public class HostingManager
             webBuilder.UseUrls($"http://localhost:{_port}");
             webBuilder.ConfigureServices(serviceCollection);
             webBuilder.Configure(applicationBuilder);
-
         };
 
         hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
 
         _host = hostBuilder.Build();
-
-
-
-        Console.WriteLine(_host);
     }
+
     public async Task StartHosting()
     {
         await _host.StartAsync();
+
         GameManager gameDataManager =  GameManager.GetInstance();
 
         _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
@@ -91,11 +87,11 @@ public class HostingManager
 
     public void DisposeHost()
     {
-        // Check if host is null if its not null it will dispose the host
+        // The ? checks if host is null if its not null it will dispose the host
         _host?.Dispose();
     }
 
-    public async Task<string> GetPublicIP()
+    public async Task<string> GetPublicIp()
     {
         HttpClient client = new HttpClient();
 
@@ -103,5 +99,4 @@ public class HostingManager
 
         return ip;
     }
-
 }

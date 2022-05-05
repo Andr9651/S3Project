@@ -10,16 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-
 namespace TestDesktopHostingClient;
-
 public class TestBuyBuilding
 {
-
     [Fact]
     public void TestPurchasableService()
     {
-
         //Arrange 
         PurchasableService purchasableService = new PurchasableService();
 
@@ -27,20 +23,18 @@ public class TestBuyBuilding
         Task<List<Purchasable>> task = purchasableService.GetPurchasables();
         task.Wait();
         List<Purchasable> foundPurchasable = task.Result;
-        
+
         //Assert
         Assert.NotNull(foundPurchasable);
-
     }
 
     [Fact]
     public void TestReceivePurchasables()
     {
-
         // Arrange 
         GameManager gameManager = GameManager.GetInstance();
+        gameManager.SetupGame().Wait();
 
-        gameManager.SetupGame();
         HostingManager hostingManager = new HostingManager();
         hostingManager.SetupSignalRHost();
         hostingManager.StartHosting().Wait();
@@ -49,12 +43,16 @@ public class TestBuyBuilding
         IHubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = hubConnectionBuilder.Build();
+
         List<Purchasable> receivedPurchasables = null;
+
         connection.On<List<Purchasable>>("ReceivePurchasables", (purchasables) =>
         {
             receivedPurchasables = purchasables;
         });
+
         connection.StartAsync().Wait();
+
         Thread.Sleep(2000);
 
         //Assert
@@ -63,32 +61,36 @@ public class TestBuyBuilding
     }
 
     [Theory]
-    [InlineData(10,5,1,true)]
-    [InlineData(10,15,1,false)]
+    [InlineData(10, 5, 1, true)]
+    [InlineData(10, 15, 1, false)]
     public void TestBuy(int startingBalance, int purchasablePrice, int buyId, bool shouldSucceed)
     {
-        // Arrnge
-        GameManager gameManager = GameManager.GetInstance();
-        GameData gameData = new GameData() { 
-                Balance = startingBalance 
-        };
-        gameManager.CreateGameData(gameData);
+        // Arrange
 
-        Dictionary<int,Purchasable> purchasables = new Dictionary<int,Purchasable>();
-        Purchasable purchasable1 = new Purchasable() { 
-                Id = 1, 
-                Name = "TestPurchasable1", 
-                Price = purchasablePrice 
+
+        Purchasable purchasable1 = new Purchasable()
+        {
+            Id = 1,
+            Name = "TestPurchasable1",
+            Price = purchasablePrice
         };
 
+        Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
         purchasables.Add(purchasable1.Id, purchasable1);
+
+        GameData gameData = new GameData()
+        {
+            Balance = startingBalance
+        };
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
         // Act
         bool isSuccess = gameManager.TryBuyBuilding(buyId);
 
         // Assert
-        Assert.Equal(shouldSucceed, isSuccess);
         if (shouldSucceed)
         {
             Assert.Equal(startingBalance - purchasablePrice, gameManager.GetBalance());
@@ -98,5 +100,6 @@ public class TestBuyBuilding
             Assert.Equal(startingBalance, gameManager.GetBalance());
         }
 
+        Assert.Equal(shouldSucceed, isSuccess);
     }
 }
