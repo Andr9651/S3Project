@@ -21,8 +21,9 @@ public class GameManager
     /// <value>
     /// True if a GameData instance is present
     /// </value>
-    public bool HasGameData { 
-        get { return (GameData is not null);} 
+    public bool HasGameData
+    {
+        get { return (GameData is not null); }
     }
 
     /// <summary>
@@ -32,7 +33,7 @@ public class GameManager
     /// <br/>
     /// Value: Purchasable
     /// </summary>
-    public Dictionary<int,Purchasable> Purchasables { get; set; }
+    public Dictionary<int, Purchasable> Purchasables { get; set; }
 
     public bool IsUpdateThreadRunning
     {
@@ -46,13 +47,12 @@ public class GameManager
     /// Returns the updated balance when invoked
     /// </summary>
     public event Action<int> OnBalanceChanged;
-    
+
     private GameData? GameData { get; set; }
     private static GameManager _instance;
     private Thread incrementBalanceThread;
     private volatile bool _isRunning;
 
-   
     private GameManager()
     {
 
@@ -107,7 +107,7 @@ public class GameManager
 
     public void CreateGameData(GameData? loadedData = null)
     {
-        if(loadedData == null)
+        if (loadedData == null)
         {
             GameData = new GameData();
         }
@@ -120,11 +120,12 @@ public class GameManager
     public async Task SetupGame()
     {
         PurchasableService purchasableService = new PurchasableService();
-        List<Purchasable> purchasables  = await purchasableService.GetPurchasables();
+        List<Purchasable> purchasables = await purchasableService.GetPurchasables();
 
         Purchasables = purchasables.ToDictionary(
             keySelector: purchasable => purchasable.Id,
-            elementSelector: purchasable => purchasable);
+            elementSelector: purchasable => purchasable
+        );
 
         CreateGameData();
 
@@ -138,33 +139,31 @@ public class GameManager
 
     public int GetBalance()
     {
-        lock (GameData)
-        {
-            return GameData.Balance;
-        }
+        return GameData.Balance;
     }
 
     private void SetBalance(int newBalance)
     {
-        lock (GameData)
-        {
-            GameData.Balance = newBalance;
-        }
+        GameData.Balance = newBalance;
     }
 
     public bool TryBuyBuilding(int purchasableId)
     {
         bool isSuccess = false;
-        Purchasable purchasable = Purchasables[purchasableId];
 
-        int balance = GetBalance();
-        if(balance >= purchasable.Price)
+        //This fixes Race condition
+        lock (GameData)
         {
-            SetBalance(balance - purchasable.Price);
-            isSuccess = true;
+            Purchasable purchasable = Purchasables[purchasableId];
+
+            int balance = GetBalance();
+            if (balance >= purchasable.Price)
+            {
+                SetBalance(balance - purchasable.Price);
+                isSuccess = true;
+            }
         }
 
         return isSuccess;
     }
-
 }

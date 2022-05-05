@@ -6,8 +6,6 @@ using System.Linq;
 using System.Collections.Generic;
 
 namespace DesktopHostingClient.Hubs;
-
-
 public class GameHub : Hub
 {
     public GameManager GameManager { get; set; }
@@ -30,7 +28,9 @@ public class GameHub : Hub
     public override async Task OnConnectedAsync()
     {
         GameManager.NotifyBalanceChanged();
+
         List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
+
         Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
     }
 }

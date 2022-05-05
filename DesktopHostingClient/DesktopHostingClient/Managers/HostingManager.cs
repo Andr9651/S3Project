@@ -84,7 +84,7 @@ public class HostingManager
     public async Task StartHosting()
     {
         await _host.StartAsync();
-        GameManager gameManager =  GameManager.GetInstance();
+        GameManager gameDataManager =  GameManager.GetInstance();
 
         _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }
