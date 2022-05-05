@@ -6,63 +6,63 @@
 
 <h3>Game</h3>
 
-<p role="status">Ip: @ip</p>
+<p role="status">Ip: @Ip</p>
 
-<p role="status">Balance: @balance</p>
+<p role="status">Balance: @Balance</p>
 
 
 <button class="btn btn-primary" @onclick="@StartConnection">Click me</button>
 <button class="btn btn-primary" @onclick="@Ping">Ping</button>
 
+@foreach (Purchasable p in Purchasables)
+{
+    <button class="btn btn-primary">
+        @p.Name
+    </button>
+}
 @code {
 
 
     [Parameter]
-    public string ip { get; set; }
+    public string Ip { get; set; }
 
-    public int balance { get; set; } = 0;
+    public int Balance { get; set; } = 0;
+
+    public List<Purchasable> Purchasables { get; set; }
 
     GameManager gameManager = new GameManager();
 
     private async Task StartConnection()
     {
-        await gameManager.ConnectToGame(ip);
+        await gameManager.ConnectToGame(Ip);
     }
 
     private void Ping()
     {
         gameManager.PingServer();
-        ip = "ping";
+        Ip = "ping";
     }
 
     protected override void OnInitialized()
     {
+        Purchasables = new List<Purchasable>();
         base.OnInitialized();
 
         gameManager.BalanceUpdateEvent += (balance) =>
         {
-            this.balance = balance;
+            this.Balance = balance;
             InvokeAsync(StateHasChanged);
         };
 
         gameManager.PongEvent += () =>
         {
-            ip = "Pong";
+            Ip = "Pong";
             InvokeAsync(StateHasChanged);
         };
 
         gameManager.ReceivePurchasablesEvent += (purchasables) =>
         {
-
-            foreach (Purchasable p in purchasables)
-            {
-                <button>
-                @p.Name
-                </button>
-
-
-            }
-
+            Purchasables = purchasables;
             InvokeAsync(StateHasChanged);
         };
 

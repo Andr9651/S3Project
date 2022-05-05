@@ -23,6 +23,7 @@ public class GameManager
 
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
+        _connection.On<List<Purchasable>>("ReceivePurchasables", ReceivePurchasables);
 
         await _connection.StartAsync();
 

@@ -58,5 +58,6 @@ public class BuyBuilding
 
         //Assert
         Assert.NotNull(receivedPurchasables);
+        Assert.True(receivedPurchasables.Count > 0);
     }
 }
