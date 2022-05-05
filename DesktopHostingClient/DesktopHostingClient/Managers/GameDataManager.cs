@@ -17,7 +17,7 @@ public class GameDataManager
     public event Action<int> OnBalanceChanged;
     private Thread incrementBalanceThread;
     private volatile bool _isRunning;
-    public Dictionary<int,Purchasable> Purchasables { get; private set; }
+    public Dictionary<int,Purchasable> Purchasables { get; set; }
     public bool IsUpdateThreadRunning
     {
         get { return _isRunning; }
@@ -65,9 +65,16 @@ public class GameDataManager
         OnBalanceChanged?.Invoke(GameData.Balance);
     }
 
-    public void CreateGameData()
+    public void CreateGameData(GameData? loadedData = null)
     {
-        GameData = new GameData();
+        if(loadedData == null)
+        {
+            GameData = new GameData();
+        }
+        else
+        {
+            GameData = loadedData;
+        }
     }
 
     public int GetBalance()
@@ -97,6 +104,21 @@ public class GameDataManager
             elementSelector: purchasable => purchasable);
 
         CreateGameData();
-
     }
+
+    public bool TryBuyBuilding(int purchasableId)
+    {
+        bool isSuccess = false;
+        Purchasable purchasable = Purchasables[purchasableId];
+
+        int balance = GetBalance();
+        if(balance >= purchasable.Price)
+        {
+            SetBalance(balance - purchasable.Price);
+            isSuccess = true;
+        }
+
+        return isSuccess;
+    }
+
 }
