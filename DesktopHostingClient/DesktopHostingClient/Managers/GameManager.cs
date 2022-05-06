@@ -47,7 +47,7 @@ public class GameManager
     /// Returns the updated balance when invoked
     /// </summary>
     public event Action<int> OnBalanceChanged;
-
+    public event Action<int, int> OnPurchase;
     private GameData? GameData { get; set; }
     private static GameManager _instance;
     private Thread incrementBalanceThread;
@@ -191,6 +191,8 @@ public class GameManager
 
     private void BuyPurchasable(int purchasableId)
     {
-        GameData.Purchases[purchasableId] = GetPurchasedAmount(purchasableId) + 1;
+        int newPurchasedAmount = GetPurchasedAmount(purchasableId) + 1;
+        GameData.Purchases[purchasableId] = newPurchasedAmount;
+        OnPurchase(purchasableId, newPurchasedAmount);
     }
 }

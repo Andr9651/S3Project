@@ -31,10 +31,16 @@ public class HostingManager
         _port = "5100";
 
         GameManager gameManager = GameManager.GetInstance();
-        gameManager.OnBalanceChanged += PushBalanceToClient;
+        gameManager.OnBalanceChanged += PushBalanceToClients;
+        gameManager.OnPurchase += PushPurchaseToClients;
     }
 
-    public void PushBalanceToClient(int balance)
+    private void PushPurchaseToClients(int purchaseId, int amount)
+    {
+        _hubContext.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
+    }
+
+    private void PushBalanceToClients(int balance)
     {
         _hubContext.Clients.All.SendAsync("BalanceUpdate", balance);
     }

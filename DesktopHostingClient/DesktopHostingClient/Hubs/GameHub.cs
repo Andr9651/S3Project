@@ -15,6 +15,15 @@ public class GameHub : Hub
         GameManager = GameManager.GetInstance();
     }
 
+    public override async Task OnConnectedAsync()
+    {
+        GameManager.NotifyBalanceChanged();
+
+        List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
+
+        Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
+    }
+
     public bool HasGame()
     {
         return GameManager.HasGameData;
@@ -25,12 +34,8 @@ public class GameHub : Hub
         Clients.Caller.SendAsync("Pong");
     }
 
-    public override async Task OnConnectedAsync()
+    public bool TryBuyPurchasable(int purchasableId)
     {
-        GameManager.NotifyBalanceChanged();
-
-        List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
-
-        Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
+        return GameManager.TryBuyPurchasable(purchasableId);
     }
 }

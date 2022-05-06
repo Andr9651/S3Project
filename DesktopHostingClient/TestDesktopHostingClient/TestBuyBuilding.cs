@@ -107,4 +107,102 @@ public class TestBuyBuilding
 
         Assert.Equal(shouldSucceed, isSuccess);
     }
+
+    [Fact]
+    public void ReceivePurchaseUpdate()
+    {
+        // Arrange
+        Purchasable purchasable1 = new Purchasable()
+        {
+            Id = 1,
+            Name = "TestPurchasable1",
+            Price = 10
+        };
+
+        Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
+        purchasables.Add(purchasable1.Id, purchasable1);
+
+        GameData gameData = new GameData()
+        {
+            Balance = 15
+        };
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData(gameData);
+        gameManager.Purchasables = purchasables;
+
+        HostingManager hostingManager = new HostingManager();
+        hostingManager.SetupSignalRHost();
+        hostingManager.StartHosting().Wait();
+
+        HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
+        hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
+        HubConnection hubConnection = hubConnectionBuilder.Build();
+        
+        // Arrange
+        bool receivedPurchase = false;
+
+        hubConnection.On<int, int>("PurchaseUpdate", (purchaseId, amount) =>
+        {
+            receivedPurchase = true;
+        });
+        hubConnection.StartAsync().Wait();
+
+        gameManager.TryBuyPurchasable(1);
+        Thread.Sleep(500);
+        
+        // Assert
+        Assert.True(receivedPurchase);
+
+        hostingManager.DisposeHost();
+    }
+
+    [Fact]
+    public void TryBuyPurchasableRPC()
+    {
+        // Arrange
+        Purchasable purchasable1 = new Purchasable()
+        {
+            Id = 1,
+            Name = "TestPurchasable1",
+            Price = 10
+        };
+
+        Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
+        purchasables.Add(purchasable1.Id, purchasable1);
+
+        GameData gameData = new GameData()
+        {
+            Balance = 15
+        };
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData(gameData);
+        gameManager.Purchasables = purchasables;
+
+        HostingManager hostingManager = new HostingManager();
+        hostingManager.SetupSignalRHost();
+        hostingManager.StartHosting().Wait();
+
+        HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
+        hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
+        HubConnection hubConnection = hubConnectionBuilder.Build();
+
+        // Act
+        bool receivedPurchase = false;
+
+        hubConnection.On<int, int>("PurchaseUpdate", (purchaseId, amount) =>
+        {
+            receivedPurchase = true;
+        });
+        hubConnection.StartAsync().Wait();
+
+        hubConnection.InvokeAsync("TryBuyPurchasable", 1);
+        Thread.Sleep(500);
+        
+        // Assert
+        Assert.True(receivedPurchase);
+
+        hostingManager.DisposeHost();
+    }
 }
