@@ -147,23 +147,50 @@ public class GameManager
         GameData.Balance = newBalance;
     }
 
-    public bool TryBuyBuilding(int purchasableId)
+    public bool TryBuyPurchasable(int purchasableId)
     {
         bool isSuccess = false;
 
         //This fixes Race condition
         lock (GameData)
         {
-            Purchasable purchasable = Purchasables[purchasableId];
-
-            int balance = GetBalance();
-            if (balance >= purchasable.Price)
+            if (Purchasables.ContainsKey(purchasableId))
             {
-                SetBalance(balance - purchasable.Price);
-                isSuccess = true;
+                Purchasable purchasable = Purchasables[purchasableId];
+
+                int balance = GetBalance();
+                if (balance >= purchasable.Price)
+                {
+                    SetBalance(balance - purchasable.Price);
+                    BuyPurchasable(purchasableId);
+                    isSuccess = true;
+                }
             }
         }
 
         return isSuccess;
+
+    }
+
+    public IReadOnlyDictionary<int, int> GetPurchases()
+    {
+        return GameData.Purchases;
+    }
+
+    public int GetPurchasedAmount(int purchasableId)
+    {
+        if (GameData.Purchases.ContainsKey(purchasableId))
+        {
+            return GameData.Purchases[purchasableId];
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private void BuyPurchasable(int purchasableId)
+    {
+        GameData.Purchases[purchasableId] = GetPurchasedAmount(purchasableId) + 1;
     }
 }

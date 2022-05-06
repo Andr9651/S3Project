@@ -63,6 +63,10 @@ public class TestBuyBuilding
     [Theory]
     [InlineData(10, 5, 1, true)]
     [InlineData(10, 15, 1, false)]
+    [InlineData(10, 5, 2, false)]
+    [InlineData(10, 10, 1, true)]
+    // We allow purchasables with a negative price
+    [InlineData(10, -1, 1, true)]
     public void TestBuy(int startingBalance, int purchasablePrice, int buyId, bool shouldSucceed)
     {
         // Arrange
@@ -88,16 +92,17 @@ public class TestBuyBuilding
         gameManager.Purchasables = purchasables;
 
         // Act
-        bool isSuccess = gameManager.TryBuyBuilding(buyId);
-
+        bool isSuccess = gameManager.TryBuyPurchasable(buyId);
         // Assert
         if (shouldSucceed)
         {
             Assert.Equal(startingBalance - purchasablePrice, gameManager.GetBalance());
+            Assert.Equal(1, gameManager.GetPurchasedAmount(buyId));
         }
         else
         {
             Assert.Equal(startingBalance, gameManager.GetBalance());
+            Assert.Equal(0, gameManager.GetPurchasedAmount(buyId));
         }
 
         Assert.Equal(shouldSucceed, isSuccess);
