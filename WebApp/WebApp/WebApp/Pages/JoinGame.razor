@@ -11,6 +11,11 @@
 <button @onclick="ButtonJoinGame">
     Join Game
 </button>
+
+<button @onclick="@ButtonJoinLocalGame">
+    Join local game
+</button>
+
 @if (!String.IsNullOrEmpty(error))
 {
     <p>
@@ -26,7 +31,6 @@
 
     public void ButtonJoinGame()
     {
-
         if (JoinGameManager.ValidateIP(ip))
         {
             string gameURI = JoinGameManager.CreateJoinGameURI(ip);
@@ -37,7 +41,10 @@
         {
             error = " Incorrect IP";
         }
-
     }
 
+    public void ButtonJoinLocalGame()
+    {
+        navManager.NavigateTo("/game/localhost:5100");
+    }
 }
