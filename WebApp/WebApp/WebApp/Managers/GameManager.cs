@@ -8,6 +8,8 @@ public class GameManager
     public event Action PongEvent;
     public event Action<int> BalanceUpdateEvent;
     public event Action<List<Purchasable>> ReceivePurchasablesEvent;
+    public event Action<Dictionary<int, int>> ReceivePurchasesEvent;
+    public event Action<int,int> ReceivePurchaseUpdateEvent;
 
     public async Task ConnectToGame(string ip)
     {
@@ -24,11 +26,27 @@ public class GameManager
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
         _connection.On<List<Purchasable>>("ReceivePurchasables", ReceivePurchasables);
-
+        _connection.On<Dictionary<int, int>>("ReceivePurchases", ReceivePurchases);
+        _connection.On<int, int>("PurchaseUpdate", ReceivePurchaseUpdate);
+        
         await _connection.StartAsync();
-
     }
 
+    private void ReceivePurchaseUpdate(int purchaseId, int amount)
+    {
+        ReceivePurchaseUpdateEvent(purchaseId, amount);
+    }
+
+    private void ReceivePurchases(Dictionary<int, int> purchases)
+    {
+        ReceivePurchasesEvent(purchases);
+    }
+
+    public async Task<bool> TryBuyPurchasable(int purchasableId)
+    {
+        return await _connection.InvokeAsync<bool>("TryBuyPurchasable", purchasableId);
+    }
+    
     private void BalanceUpdate(int balance)
     {
         BalanceUpdateEvent(balance);
@@ -52,6 +70,5 @@ public class GameManager
     private void ReceivePurchasables(List<Purchasable> purchasables)
     {
         ReceivePurchasablesEvent(purchasables);
-
     }
 }

@@ -16,10 +16,11 @@
 
 @foreach (Purchasable p in Purchasables)
 {
-    <button class="btn btn-primary">
-        @p.Name @p.Price 
+    <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+        @p.Name @p.Price Count:@GetPurchaseAmount(p.Id)
     </button>
 }
+
 @code 
 {
     [Parameter]
@@ -27,7 +28,9 @@
 
     public int Balance { get; set; } = 0;
 
-    public List<Purchasable> Purchasables { get; set; }
+    public List<Purchasable> Purchasables { get; set; } = new List<Purchasable>();
+
+    private Dictionary<int, int> _purchases = new Dictionary<int, int>();
 
     GameManager gameManager = new GameManager();
 
@@ -40,6 +43,23 @@
     {
         gameManager.PingServer();
         Ip = "ping";
+    }
+
+    public int GetPurchaseAmount(int purchasableId)
+    {
+        int amount = 0;
+
+        if (_purchases.ContainsKey(purchasableId))
+        {
+            amount = _purchases[purchasableId];
+        }
+
+        return amount;
+    }
+
+    public async void TryBuyPurchasable(int purchasableId)
+    {
+        await gameManager.TryBuyPurchasable(purchasableId);
     }
 
     protected override void OnInitialized()
@@ -65,5 +85,16 @@
             InvokeAsync(StateHasChanged);
         };
 
+        gameManager.ReceivePurchasesEvent += (purchases) =>
+        {
+            _purchases = purchases;
+            InvokeAsync(StateHasChanged);
+        };
+
+        gameManager.ReceivePurchaseUpdateEvent += (purchaseId, amount) =>
+        {
+            _purchases[purchaseId] = amount;
+            InvokeAsync(StateHasChanged);
+        };
     }
 }

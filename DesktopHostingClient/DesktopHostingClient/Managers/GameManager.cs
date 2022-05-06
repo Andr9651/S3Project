@@ -145,6 +145,7 @@ public class GameManager
     private void SetBalance(int newBalance)
     {
         GameData.Balance = newBalance;
+        OnBalanceChanged(newBalance);
     }
 
     public bool TryBuyPurchasable(int purchasableId)
