@@ -37,12 +37,12 @@ public class HostingManager
 
     private void PushPurchaseToClients(int purchaseId, int amount)
     {
-        _hubContext.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
+        _hubContext?.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
     }
 
     private void PushBalanceToClients(int balance)
     {
-        _hubContext.Clients.All.SendAsync("BalanceUpdate", balance);
+        _hubContext?.Clients.All.SendAsync("BalanceUpdate", balance);
     }
 
     public void SetupSignalRHost()

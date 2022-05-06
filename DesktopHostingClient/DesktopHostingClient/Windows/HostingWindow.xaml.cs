@@ -28,13 +28,14 @@ public partial class HostingWindow : Window
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        await GameManager.SetupGame();
 
         LabelIpAddress.Content = await HostingManager.GetPublicIp();
 
         HostingManager.SetupSignalRHost();
 
         await HostingManager.StartHosting();
+
+        await GameManager.SetupGame();
 
         LabelPort.Content = HostingManager.Port;
     }
