@@ -17,12 +17,11 @@
 @foreach (Purchasable p in Purchasables)
 {
     <button class="btn btn-primary">
-        @p.Name
+        @p.Name @p.Price 
     </button>
 }
-@code {
-
-
+@code 
+{
     [Parameter]
     public string Ip { get; set; }
 

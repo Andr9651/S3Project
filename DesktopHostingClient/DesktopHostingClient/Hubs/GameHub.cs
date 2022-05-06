@@ -22,6 +22,10 @@ public class GameHub : Hub
         List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
 
         Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
+
+        Dictionary<int, int> readOnlyPurchases = (Dictionary<int, int>)GameManager.GetPurchases();
+
+        Clients.Caller.SendAsync("ReceivePurchases", readOnlyPurchases);
     }
 
     public bool HasGame()
