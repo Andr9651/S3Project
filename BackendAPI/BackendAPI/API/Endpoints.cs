@@ -1,5 +1,7 @@
 ﻿using BackendAPI.Model;
 using Dapper;
+using BackendAPI.Model.DTO;
+using BackendAPI.Service;
 using System.Data.SqlClient;
 
 namespace BackendAPI.API;
@@ -11,19 +13,25 @@ public class Endpoints
     {
         webApplication.MapGet("/Purchasable", () =>
         {
-            string connectionString = "Data Source=.;Initial Catalog=CookieClicker;Integrated Security=True";
+            SQLGameDataService gameDataService = new SQLGameDataService();
 
-            List<PurchasableDto>? purchasableDtos = null;
+            List<PurchasableDto> purchasables = gameDataService.GetPurchasables();
 
-            string sqlQuery = "select * from Purchasable";
+            IResult HTTPResult;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            if (purchasables is null)
             {
-                purchasableDtos = connection.Query<PurchasableDto>(sqlQuery).ToList();
+                HTTPResult = Results.StatusCode(500);
+            }
+            else
+            {
+                HTTPResult = Results.Ok(purchasables);
             }
 
-            return purchasableDtos;
+            return HTTPResult;
         });
+
+
 
 
     }

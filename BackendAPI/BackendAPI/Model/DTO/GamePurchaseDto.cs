@@ -1,4 +1,4 @@
-﻿namespace BackendAPI.Model
+﻿namespace BackendAPI.Model.DTO
 {
     public class GamePurchaseDto
     {
