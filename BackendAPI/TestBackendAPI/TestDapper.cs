@@ -82,7 +82,6 @@ namespace TestBackendAPI
         [Fact]
         public void TestCreateGameInstance()
         {
-
             //Arrange 
             SQLGameDataService sqlGameDataService = new SQLGameDataService();
             //Act 
@@ -90,7 +89,38 @@ namespace TestBackendAPI
             //Assert
             Assert.NotNull(gameInstance);
             Assert.NotEqual(0, gameInstance.Id);
-            
+
+        }
+        [Fact]
+        public void TestSaveGameInstance()
+        {
+            //Arrange 
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+
+            //Act 
+            GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+            gameInstance.Ip = "Jeg er ikke en ip";
+
+            bool result = sqlGameDataService.SaveGameInstance(gameInstance);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void TestSaveGameInstanceWithPurchases()
+        {
+            //Arrange 
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+            //Act 
+            GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+            gameInstance.Purchases.Add(2, 5);
+            gameInstance.Purchases.Add(3, 5);
+
+            bool result = sqlGameDataService.SaveGameInstance(gameInstance);
+            //Assert
+
+            Assert.True(result);
         }
     }
 }

@@ -29,8 +29,8 @@ public class SQLGameDataService
         string sqlQueryUpdateGameInstance = "Update GameInstance " +
             "set balance = @balance, hostIp = @hostIp " +
             "where id = @id";
-        string sqlQueryUpdateGamePurchases = "insert into GamePurchase" +
-            "Values (@gameinstanceId, @purchasableId, @amount)";
+        string sqlQueryUpdateGamePurchases = "insert into GamePurchase " +
+            "Values (@gamenstanceId, @purchasableId, @amount)";
 
         GameInstanceDto gameInstanceDto = gameInstance.GetGameInstanceDto();
 
@@ -38,13 +38,15 @@ public class SQLGameDataService
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            using (SqlTransaction transaction = connection.BeginTransaction())
+            connection.Open();
+            using (SqlTransaction SqlTransaction = connection.BeginTransaction())
             {
                 bool error = false;
 
                 int linesChangedGameInstance = connection.Execute(
                     sqlQueryUpdateGameInstance,
-                    gameInstanceDto
+                    gameInstanceDto,
+                    SqlTransaction
                 );
 
                 if (linesChangedGameInstance == 0)
@@ -56,7 +58,9 @@ public class SQLGameDataService
                 {
                     int linesChangedGamePurchases = connection.Execute(
                         sqlQueryUpdateGamePurchases,
-                        gamePurchaseDtoList
+                        gamePurchaseDtoList,
+                        SqlTransaction
+
                     );
 
                     if (linesChangedGamePurchases == 0)
@@ -67,12 +71,12 @@ public class SQLGameDataService
 
                 if (error)
                 {
-                    transaction.Rollback();
+                    SqlTransaction.Rollback();
                     result = false;
                 }
                 else
                 {
-                    transaction.Commit();
+                    SqlTransaction.Commit();
                     result = true;
                 }
             }
