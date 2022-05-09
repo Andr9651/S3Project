@@ -99,7 +99,7 @@ namespace TestBackendAPI
 
             //Act 
             GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
-            gameInstance.Ip = "Jeg er ikke en ip";
+            gameInstance.HostIp = "Jeg er ikke en ip";
 
             bool result = sqlGameDataService.SaveGameInstance(gameInstance);
 

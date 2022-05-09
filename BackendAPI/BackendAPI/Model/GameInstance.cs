@@ -4,15 +4,20 @@ public class GameInstance
 {
     public int Id { get; set; }
     public int Balance { get; set; }
-    public string Ip { get; set; }
+    public string HostIp { get; set; }
     public Dictionary<int, int> Purchases { get; set; }
 
+
+    public GameInstance()
+    {
+
+    }
 
     public GameInstance(GameInstanceDto gameInstanceDto, List<GamePurchaseDto> gamePurchaseDtos = null)
     {
         Id = gameInstanceDto.Id;
         Balance = gameInstanceDto.Balance;
-        Ip = gameInstanceDto.HostIp;
+        HostIp = gameInstanceDto.HostIp;
         Purchases = new Dictionary<int, int>();
 
         if (gamePurchaseDtos is not null)
@@ -30,7 +35,7 @@ public class GameInstance
         {
             Id = this.Id,
             Balance = this.Balance,
-            HostIp = this.Ip,
+            HostIp = this.HostIp,
         };
 
         return gameInstanceDto;
