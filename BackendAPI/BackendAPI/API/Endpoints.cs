@@ -3,6 +3,7 @@ using Dapper;
 using BackendAPI.Model.DTO;
 using BackendAPI.Service;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BackendAPI.API;
 
@@ -31,8 +32,42 @@ public class Endpoints
             return HTTPResult;
         });
 
+        webApplication.MapPost("/GameInstance", () =>
+        {
+            SQLGameDataService sQLGameDataService = new SQLGameDataService();
 
+            GameInstance gameInstance = sQLGameDataService.CreateGameInstance();
 
+            IResult HTTPResult;
 
+            if (gameInstance is null || gameInstance.Id == 0)
+            {
+                HTTPResult = Results.StatusCode(500);
+            }
+            else
+            {
+                HTTPResult = Results.Ok(gameInstance);
+            }
+            return HTTPResult;
+        });
+
+        webApplication.MapPut("/GameInstance", ([FromBody]GameInstance gameInstance) =>
+        {
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+            bool Success = sqlGameDataService.SaveGameInstance(gameInstance);
+
+            IResult HTTPResult;
+
+            if (Success)
+            {
+                HTTPResult = Results.Ok();
+            }
+            else
+            {
+                HTTPResult = Results.BadRequest();
+            }
+
+            return HTTPResult;
+        });
     }
 }
