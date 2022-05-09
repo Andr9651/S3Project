@@ -2,6 +2,8 @@ using Xunit;
 using System.Data.SqlClient;
 using Dapper;
 using BackendAPI.Model;
+using BackendAPI.Model.DTO;
+using BackendAPI.Service;
 
 namespace TestBackendAPI
 {
@@ -61,21 +63,34 @@ namespace TestBackendAPI
                 GameInstanceDto gameInstanceDto = new GameInstanceDto
                 {
                     Balance = 1,
-                    Ip = "Jeg er ikke en ip"
+                    HostIp = "Jeg er ikke en ip"
                 };
-                string sqlInsert = "insert into GameInstance(balance, hostIp) values (@Balance, @Ip)";
+                string sqlInsert = "insert into GameInstance(balance, hostIp) values (@Balance, @HostIp)";
                 int rowsInserted = connection.Execute(sqlInsert, gameInstanceDto);
                 //assert
                 Assert.Equal(1, rowsInserted);
                 if (rowsInserted >= 1)
                 {
                     //testDelete
-                    string sqlDelete = "delete from GameInstance where hostIp = @Ip";
+                    string sqlDelete = "delete from GameInstance where hostIp = @HostIp";
                     int rowsDeleted = connection.Execute(sqlDelete, gameInstanceDto);
                     Assert.True(rowsDeleted > 0);
                 }
-
             }
+        }
+
+        [Fact]
+        public void TestCreateGameInstance()
+        {
+
+            //Arrange 
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+            //Act 
+            GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+            //Assert
+            Assert.NotNull(gameInstance);
+            Assert.NotEqual(0, gameInstance.Id);
+            
         }
     }
 }

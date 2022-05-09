@@ -26,8 +26,11 @@ public class SQLGameDataService
     {
         bool result = false;
 
-        string sqlQueryUpdateGameInstance = "";
-        string sqlQueryUpdateGamePurchases = "";
+        string sqlQueryUpdateGameInstance = "Update GameInstance " +
+            "set balance = @balance, hostIp = @hostIp " +
+            "where id = @id";
+        string sqlQueryUpdateGamePurchases = "insert into GamePurchase" +
+            "Values (@gameinstanceId, @purchasableId, @amount)";
 
         GameInstanceDto gameInstanceDto = gameInstance.GetGameInstanceDto();
 
@@ -76,6 +79,23 @@ public class SQLGameDataService
         }
 
         return result;
+    }
+
+    public GameInstance CreateGameInstance()
+    {
+        GameInstanceDto gameInstanceDto = new GameInstanceDto();
+
+        string sqlQueryCreateGameInstance = "insert into GameInstance " +
+            "output inserted.id " +
+            "values (@Balance, @Hostip)";
+
+        using (SqlConnection connection = new SqlConnection(_dbConnectionString))
+        {
+            gameInstanceDto.Id = connection.QuerySingle<int>(sqlQueryCreateGameInstance, gameInstanceDto);
+        }
+        GameInstance gameInstance = new GameInstance(gameInstanceDto);
+
+        return gameInstance;
     }
 }
 

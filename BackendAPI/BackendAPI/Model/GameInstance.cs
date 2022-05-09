@@ -7,16 +7,20 @@ public class GameInstance
     public string Ip { get; set; }
     public Dictionary<int, int> Purchases { get; set; }
 
-    public GameInstance(GameInstanceDto gameInstanceDto, List<GamePurchaseDto> gamePurchaseDtos)
+
+    public GameInstance(GameInstanceDto gameInstanceDto, List<GamePurchaseDto> gamePurchaseDtos = null)
     {
         Id = gameInstanceDto.Id;
         Balance = gameInstanceDto.Balance;
-        Ip = gameInstanceDto.Ip;
+        Ip = gameInstanceDto.HostIp;
         Purchases = new Dictionary<int, int>();
 
-        foreach (GamePurchaseDto purchase in gamePurchaseDtos)
+        if (gamePurchaseDtos is not null)
         {
-            Purchases[purchase.PurchasableId] = purchase.Amount;
+            foreach (GamePurchaseDto purchase in gamePurchaseDtos)
+            {
+                Purchases[purchase.PurchasableId] = purchase.Amount;
+            }
         }
     }
 
@@ -26,7 +30,7 @@ public class GameInstance
         {
             Id = this.Id,
             Balance = this.Balance,
-            Ip = this.Ip,
+            HostIp = this.Ip,
         };
 
         return gameInstanceDto;
@@ -36,7 +40,7 @@ public class GameInstance
     {
         List<GamePurchaseDto> gamePurchaseDtos = new List<GamePurchaseDto>();
 
-        foreach(KeyValuePair<int, int> purchasableIdAmount in Purchases)
+        foreach (KeyValuePair<int, int> purchasableIdAmount in Purchases)
         {
             GamePurchaseDto gamePurchaseDto = new GamePurchaseDto()
             {
