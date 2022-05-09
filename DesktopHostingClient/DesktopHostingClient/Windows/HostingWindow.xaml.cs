@@ -37,6 +37,8 @@ public partial class HostingWindow : Window
 
         await GameManager.SetupGame();
 
+        GameId.Content = GameManager.GetGameId();
+
         LabelPort.Content = HostingManager.Port;
     }
 
@@ -52,5 +54,10 @@ public partial class HostingWindow : Window
         mainWindow.Show();  
 
         this.Close();
+    }
+
+    private void Save_Game_Click(object sender, RoutedEventArgs e)
+    {
+        
     }
 }

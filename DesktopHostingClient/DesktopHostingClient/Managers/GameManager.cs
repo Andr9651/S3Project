@@ -117,17 +117,22 @@ public class GameManager
         }
     }
 
-    public async Task SetupGame()
+    public async Task SetupGame(int id = 0)
     {
         PurchasableService purchasableService = new PurchasableService();
         List<Purchasable> purchasables = await purchasableService.GetPurchasables();
+        GameDataService gameDataService = new GameDataService();
+        if (id == 0)
+        {
+            GameData gameData = await gameDataService.CreateGameData();
+            CreateGameData(gameData);
+        }
 
         Purchasables = purchasables.ToDictionary(
             keySelector: purchasable => purchasable.Id,
             elementSelector: purchasable => purchasable
         );
 
-        CreateGameData();
 
         StartBalanceUpdateThread();
     }
@@ -195,5 +200,10 @@ public class GameManager
         int newPurchasedAmount = GetPurchasedAmount(purchasableId) + 1;
         GameData.Purchases[purchasableId] = newPurchasedAmount;
         OnPurchase(purchasableId, newPurchasedAmount);
+    }
+
+    public int GetGameId()
+    {
+        return GameData.Id;    
     }
 }
