@@ -19,4 +19,35 @@ public class GameInstance
             Purchases[purchase.PurchasableId] = purchase.Amount;
         }
     }
+
+    public GameInstanceDto GetGameInstanceDto()
+    {
+        GameInstanceDto gameInstanceDto = new GameInstanceDto()
+        {
+            Id = this.Id,
+            Balance = this.Balance,
+            Ip = this.Ip,
+        };
+
+        return gameInstanceDto;
+    }
+
+    public List<GamePurchaseDto> GetGamePurchaseDtos()
+    {
+        List<GamePurchaseDto> gamePurchaseDtos = new List<GamePurchaseDto>();
+
+        foreach(KeyValuePair<int, int> purchasableIdAmount in Purchases)
+        {
+            GamePurchaseDto gamePurchaseDto = new GamePurchaseDto()
+            {
+                GameInstanceId = this.Id,
+                PurchasableId = purchasableIdAmount.Key,
+                Amount = purchasableIdAmount.Value
+            };
+
+            gamePurchaseDtos.Add(gamePurchaseDto);
+        }
+
+        return gamePurchaseDtos;
+    }
 }
