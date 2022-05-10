@@ -116,7 +116,7 @@ public class SQLGameDataService
             GameInstanceDto gameInstanceDto = null;
             List<GamePurchaseDto> gamePurchasesDto = null;
 
-            gameInstanceDto = connection.QuerySingle<GameInstanceDto>(sqlQueryGetGameInstanceDto, new {id = id});
+            gameInstanceDto = connection.QuerySingleOrDefault<GameInstanceDto>(sqlQueryGetGameInstanceDto, new {id = id});
 
             if (gameInstanceDto is not null)
             {

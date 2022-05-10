@@ -162,5 +162,16 @@ namespace TestBackendAPI
             Assert.NotNull(loadedGameInstance);
             Assert.Equal(0, loadedGameInstance.Purchases.Count);
         }
+
+        [Fact]
+        public void TestLoadGameInstanceBadId()
+        {
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+
+            GameInstance gameInstance = sqlGameDataService.GetGameInstance(-1);
+
+            //Assert 
+            Assert.Null(gameInstance);
+        }
     }
 }
