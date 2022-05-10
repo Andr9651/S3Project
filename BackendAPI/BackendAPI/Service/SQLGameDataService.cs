@@ -30,7 +30,7 @@ public class SQLGameDataService
             "set balance = @balance, hostIp = @hostIp " +
             "where id = @id";
         string sqlQueryUpdateGamePurchases = "insert into GamePurchase " +
-            "Values (@gamenstanceId, @purchasableId, @amount)";
+            "Values (@gameInstanceId, @purchasableId, @amount)";
 
         GameInstanceDto gameInstanceDto = gameInstance.GetGameInstanceDto();
 
@@ -98,6 +98,33 @@ public class SQLGameDataService
             gameInstanceDto.Id = connection.QuerySingle<int>(sqlQueryCreateGameInstance, gameInstanceDto);
         }
         GameInstance gameInstance = new GameInstance(gameInstanceDto);
+
+        return gameInstance;
+    }
+
+    public GameInstance GetGameInstance(int id)
+    {
+        GameInstance gameInstance = null;
+
+        string sqlQueryGetGameInstanceDto = "select * from GameInstance " +
+            "where id = @id ";
+        string sqlQueryGetGamePurchaseDto = "select * from GamePurchase " +
+            "where GameInstanceId = @id"; 
+
+        using (SqlConnection connection = new SqlConnection(_dbConnectionString))
+        {
+            GameInstanceDto gameInstanceDto = null;
+            List<GamePurchaseDto> gamePurchasesDto = null;
+
+            gameInstanceDto = connection.QuerySingle<GameInstanceDto>(sqlQueryGetGameInstanceDto, new {id = id});
+
+            if (gameInstanceDto is not null)
+            {
+                gamePurchasesDto = connection.Query<GamePurchaseDto>(sqlQueryGetGamePurchaseDto, new { id = id }).ToList();
+
+                gameInstance = new GameInstance(gameInstanceDto, gamePurchasesDto);
+            }
+        }
 
         return gameInstance;
     }

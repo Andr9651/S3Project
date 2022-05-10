@@ -114,13 +114,53 @@ namespace TestBackendAPI
             SQLGameDataService sqlGameDataService = new SQLGameDataService();
             //Act 
             GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+            gameInstance.Purchases.Add(1, 5);
             gameInstance.Purchases.Add(2, 5);
-            gameInstance.Purchases.Add(3, 5);
 
             bool result = sqlGameDataService.SaveGameInstance(gameInstance);
             //Assert
 
             Assert.True(result);
+        }
+
+        [Fact]
+        public void TestLoadData()
+        {
+            //Arrange
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+
+            GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+            gameInstance.Purchases.Add(1, 5);
+            gameInstance.Purchases.Add(2, 5);
+
+            sqlGameDataService.SaveGameInstance(gameInstance);
+
+            //Act
+            GameInstance loadedGameInstance = sqlGameDataService.GetGameInstance(gameInstance.Id);
+
+            //Assert
+            Assert.NotNull(loadedGameInstance);
+            Assert.Equal(2, loadedGameInstance.Purchases.Count);
+            Assert.Equal(5, loadedGameInstance.Purchases[1]);
+            Assert.Equal(5, loadedGameInstance.Purchases[2]);
+        }
+
+        [Fact]
+        public void TestLoadDataWithoutPurchases()
+        {
+            //Arrange
+            SQLGameDataService sqlGameDataService = new SQLGameDataService();
+
+            GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+
+            sqlGameDataService.SaveGameInstance(gameInstance);
+
+            //Act
+            GameInstance loadedGameInstance = sqlGameDataService.GetGameInstance(gameInstance.Id);
+
+            //Assert
+            Assert.NotNull(loadedGameInstance);
+            Assert.Equal(0, loadedGameInstance.Purchases.Count);
         }
     }
 }

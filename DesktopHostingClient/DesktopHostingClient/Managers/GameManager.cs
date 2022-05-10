@@ -206,4 +206,10 @@ public class GameManager
     {
         return GameData.Id;    
     }
+
+    public Task<bool> SaveGame()
+    {
+        GameDataService gameDataService = new GameDataService();
+        return gameDataService.SaveGameData(GameData);
+    }
 }

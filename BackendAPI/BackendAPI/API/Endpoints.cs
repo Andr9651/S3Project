@@ -32,6 +32,26 @@ public class Endpoints
             return HTTPResult;
         });
 
+        webApplication.MapGet("/GameInstance/{id}", (int id) =>
+        {
+            SQLGameDataService gameDataService = new SQLGameDataService();
+
+            GameInstance gameInstance =gameDataService.GetGameInstance(id);
+
+            IResult HTTPResult;
+
+            if (gameInstance is null)
+            {
+                HTTPResult = Results.NotFound();
+            }
+            else
+            {
+                HTTPResult = Results.Ok(gameInstance);
+            }
+
+            return HTTPResult;
+        });
+
         webApplication.MapPost("/GameInstance", () =>
         {
             SQLGameDataService sQLGameDataService = new SQLGameDataService();

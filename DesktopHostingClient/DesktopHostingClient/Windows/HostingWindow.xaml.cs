@@ -56,8 +56,8 @@ public partial class HostingWindow : Window
         this.Close();
     }
 
-    private void Save_Game_Click(object sender, RoutedEventArgs e)
+    private async void Save_Game_Click(object sender, RoutedEventArgs e)
     {
-        
+        bool result = await GameManager.SaveGame();
     }
 }
