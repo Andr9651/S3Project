@@ -20,6 +20,8 @@
         @p.Name @p.Price Count:@GetPurchaseAmount(p.Id)
     </button>
 }
+<input type="checkbox" value="@_delay" @bind="@_delay">
+<label>Delay</label>
 
 @code
 {
@@ -31,6 +33,8 @@
     public List<Purchasable> Purchasables { get; set; } = new List<Purchasable>();
 
     private Dictionary<int, int> _purchases = new Dictionary<int, int>();
+
+    private bool _delay;
 
     GameManager gameManager = new GameManager();
 
@@ -63,8 +67,17 @@
 
         if (Balance >= purchasable.Price)
         {
-            await gameManager.TryBuyPurchasable(purchasableId);
-        } else
+            if (_delay)
+            {
+                await Task.Delay(5000);
+            }
+            bool success = await gameManager.TryBuyPurchasable(purchasableId);
+            if (!success)
+            {
+                await JsRunTime.InvokeVoidAsync("alert", "Somebody bought something before you! (╯°□°）╯︵ ┻━┻");
+            }
+        }
+        else
         {
             await JsRunTime.InvokeVoidAsync("alert", "Insufficient funds!");
         }
