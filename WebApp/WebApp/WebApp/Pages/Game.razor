@@ -2,7 +2,7 @@
 @page "/Game/{ip}"
 @using WebApp.Managers
 @using static WebApp.Model.Purchasables
-
+@inject IJSRuntime JsRunTime
 
 <h3>Game</h3>
 
@@ -21,7 +21,7 @@
     </button>
 }
 
-@code 
+@code
 {
     [Parameter]
     public string Ip { get; set; }
@@ -59,7 +59,15 @@
 
     public async void TryBuyPurchasable(int purchasableId)
     {
-        await gameManager.TryBuyPurchasable(purchasableId);
+        Purchasable purchasable = Purchasables.Find(p => p.Id == purchasableId);
+
+        if (Balance >= purchasable.Price)
+        {
+            await gameManager.TryBuyPurchasable(purchasableId);
+        } else
+        {
+            await JsRunTime.InvokeVoidAsync("alert", "Insufficient funds!");
+        }
     }
 
     protected override void OnInitialized()
