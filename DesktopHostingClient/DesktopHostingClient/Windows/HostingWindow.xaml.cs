@@ -18,16 +18,18 @@ public partial class HostingWindow : Window
 {
     public HostingManager HostingManager { get; set; }
     public GameManager GameManager { get; set; }
-
-    public HostingWindow()
+    private int? _loadGameId { get; set; }
+    public HostingWindow(int? loadGameId = null)
     {
         InitializeComponent();
         GameManager = GameManager.GetInstance();
         HostingManager = new HostingManager();
+        _loadGameId = loadGameId;
     }
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
+        
 
         LabelIpAddress.Content = await HostingManager.GetPublicIp();
 
@@ -35,7 +37,7 @@ public partial class HostingWindow : Window
 
         await HostingManager.StartHosting();
 
-        await GameManager.SetupGame();
+        await GameManager.SetupGame(_loadGameId);
 
         GameId.Content = GameManager.GetGameId();
 

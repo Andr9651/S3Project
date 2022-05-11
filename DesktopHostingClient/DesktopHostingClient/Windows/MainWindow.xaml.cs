@@ -38,4 +38,20 @@ public partial class MainWindow : Window
 
         this.Close();
     }
+
+    private void Load_Game_Click(object sender, RoutedEventArgs e)
+    {
+        string loadGameIdText = LoadGameTextBox.Text;
+        
+        if (int.TryParse(loadGameIdText, out int loadGameId))
+        {
+            HostingWindow hostingWindow = new HostingWindow(loadGameId);
+            hostingWindow.Show();
+
+            this.Close();
+        } else
+        {
+            MessageBox.Show($"{loadGameIdText} is not a valid id", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
 }

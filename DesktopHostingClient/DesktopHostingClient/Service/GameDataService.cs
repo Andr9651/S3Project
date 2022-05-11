@@ -38,4 +38,19 @@ public class GameDataService
 
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<GameData> LoadGameData(int id)
+    {
+        HttpClient client = new HttpClient();
+
+        HttpResponseMessage response = await client.GetAsync($"https://localhost:7236/GameInstance/{id}");
+
+        GameData gameData = null;
+
+        if (response.IsSuccessStatusCode)
+        {
+            gameData = await response.Content.ReadFromJsonAsync<GameData>();
+        }
+        return gameData;
+    }
 }

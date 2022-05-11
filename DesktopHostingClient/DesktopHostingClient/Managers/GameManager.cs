@@ -117,15 +117,19 @@ public class GameManager
         }
     }
 
-    public async Task SetupGame(int id = 0)
+    public async Task SetupGame(int? loadedGameId = null)
     {
         PurchasableService purchasableService = new PurchasableService();
         List<Purchasable> purchasables = await purchasableService.GetPurchasables();
         GameDataService gameDataService = new GameDataService();
-        if (id == 0)
+        
+        if (loadedGameId is null)
         {
-            GameData gameData = await gameDataService.CreateGameData();
-            CreateGameData(gameData);
+            GameData = await gameDataService.CreateGameData();
+        } 
+        else
+        {
+           GameData = await gameDataService.LoadGameData(loadedGameId.Value);
         }
 
         Purchasables = purchasables.ToDictionary(
