@@ -74,7 +74,7 @@
             bool success = await gameManager.TryBuyPurchasable(purchasableId);
             if (!success)
             {
-                await JsRunTime.InvokeVoidAsync("alert", "Somebody bought something before you! (╯°□°）╯︵ ┻━┻");
+                await JsRunTime.InvokeVoidAsync("alert", "Somebody bought something before you!");
             }
         }
         else

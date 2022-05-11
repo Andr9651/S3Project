@@ -122,14 +122,14 @@ public class GameManager
         PurchasableService purchasableService = new PurchasableService();
         List<Purchasable> purchasables = await purchasableService.GetPurchasables();
         GameDataService gameDataService = new GameDataService();
-        
+
         if (loadedGameId is null)
         {
             GameData = await gameDataService.CreateGameData();
-        } 
+        }
         else
         {
-           GameData = await gameDataService.LoadGameData(loadedGameId.Value);
+            GameData = await gameDataService.LoadGameData(loadedGameId.Value);
         }
 
         Purchasables = purchasables.ToDictionary(
@@ -154,7 +154,10 @@ public class GameManager
     private void SetBalance(int newBalance)
     {
         GameData.Balance = newBalance;
-        OnBalanceChanged(newBalance);
+        if (OnBalanceChanged is not null)
+        {
+            OnBalanceChanged(newBalance);
+        }
     }
 
     public bool TryBuyPurchasable(int purchasableId)
@@ -203,12 +206,16 @@ public class GameManager
     {
         int newPurchasedAmount = GetPurchasedAmount(purchasableId) + 1;
         GameData.Purchases[purchasableId] = newPurchasedAmount;
-        OnPurchase(purchasableId, newPurchasedAmount);
+
+        if (OnPurchase is not null)
+        {
+            OnPurchase(purchasableId, newPurchasedAmount);
+        }
     }
 
     public int GetGameId()
     {
-        return GameData.Id;    
+        return GameData.Id;
     }
 
     public Task<bool> SaveGame()
