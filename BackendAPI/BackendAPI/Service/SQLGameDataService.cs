@@ -29,7 +29,11 @@ public class SQLGameDataService
         string sqlQueryUpdateGameInstance = "Update GameInstance " +
             "set balance = @balance, hostIp = @hostIp " +
             "where id = @id";
-        string sqlQueryUpdateGamePurchases = "insert into GamePurchase " +
+        string sqlQueryUpdateGamePurchases = "update gamepurchase " +
+            "set amount = @amount " +
+            "where gameinstanceId = @gameInstanceId and purchasableId = @purchasableId " +
+            "if @@rowcount = 0 " +
+            "insert into GamePurchase " +
             "Values (@gameInstanceId, @purchasableId, @amount)";
 
         GameInstanceDto gameInstanceDto = gameInstance.GetGameInstanceDto();
