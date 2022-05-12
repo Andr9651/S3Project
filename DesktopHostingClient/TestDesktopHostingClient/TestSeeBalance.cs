@@ -36,6 +36,7 @@ public class TestSeeBalance
     }
 
     [Fact]
+    [Trait("UserStory", "See Balance")]
     public void TestReciveBalanceUpdate()
     {
         // Arrange 

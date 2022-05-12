@@ -13,6 +13,7 @@ namespace TestDesktopHostingClient;
 public class TestHostingScreen
 {
     [Fact]
+    [Trait("UserStory", "Hosting Screen")]
     public async void TestGetHostIp ()
     {
         //Arrange

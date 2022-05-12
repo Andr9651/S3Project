@@ -10,6 +10,7 @@ namespace TestDesktopHostingClient;
 public class TestCreateNewGameInstance
 {
     [Fact]
+    [Trait("UserStory", "Create New Game Instance")]
     public void TestCreateGame()
     {
         //Arrange
@@ -21,7 +22,9 @@ public class TestCreateNewGameInstance
         //Assert
         Assert.True(gameManager.HasGameData);
     }
+
     [Fact]
+    [Trait("UserStory", "Create New Game Instance")]
     public void TestGetBalance()
     {
         //Arrange
@@ -33,7 +36,9 @@ public class TestCreateNewGameInstance
         //Assert
         Assert.Equal(0, gameManager.GetBalance());
     }
+
     [Fact]
+    [Trait("UserStory", "See Balance")]
     public void TestStartBalanceUpdateThread()
     {
         //Arrange 

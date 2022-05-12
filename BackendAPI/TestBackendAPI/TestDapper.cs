@@ -23,7 +23,8 @@ public class TestDapper
     }
 
     [Fact]
-    public void TestLocalConnection()
+    [Trait("UserStory", "SQL Database")]
+    public void TestConnection()
     {
         //arrange
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
@@ -38,6 +39,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "SQL Database")]
     public void TestPurchasableDto()
     {
         //arrange
@@ -65,6 +67,7 @@ public class TestDapper
         }
     }
     [Fact]
+    [Trait("UserStory", "SQL Database")]
     public void TestGameInstanceDto()
     {
         //arrange
@@ -92,6 +95,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "Create New Game Instance")]
     public void TestCreateGameInstance()
     {
         //Arrange 
@@ -101,9 +105,10 @@ public class TestDapper
         //Assert
         Assert.NotNull(gameInstance);
         Assert.NotEqual(0, gameInstance.Id);
-
     }
+
     [Fact]
+    [Trait("UserStory", "Save Game")]
     public void TestSaveGameInstance()
     {
         //Arrange 
@@ -120,6 +125,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "Save Game")]
     public void TestSaveGameInstanceWithPurchases()
     {
         //Arrange 
@@ -136,6 +142,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "Load Game Instance")]
     public void TestLoadData()
     {
         //Arrange
@@ -158,6 +165,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "Load Game Instance")]
     public void TestLoadDataWithoutPurchases()
     {
         //Arrange
@@ -176,6 +184,7 @@ public class TestDapper
     }
 
     [Fact]
+    [Trait("UserStory", "Load Game Instance")]
     public void TestLoadGameInstanceBadId()
     {
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);

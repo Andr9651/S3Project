@@ -13,6 +13,8 @@ namespace TestDesktopHostingClient;
 public class TestShowRaceCondition
 {
     [Theory]
+    [Trait("UserStory", "Show Race Condition")]
+    [Trait("UserStory", "Buy Buildings")]
     [InlineData(10)]
     [InlineData(100)]
     [InlineData(1000)]

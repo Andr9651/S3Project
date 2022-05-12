@@ -15,6 +15,7 @@ public class TestGameDataService
     private string _apiUrl = "https://localhost:7236";
 
     [Fact]
+    [Trait("UserStory", "Load Game")]
     public void TestLoadGame()
     {
         //Arrange

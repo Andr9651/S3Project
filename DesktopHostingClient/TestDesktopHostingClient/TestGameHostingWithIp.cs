@@ -19,7 +19,6 @@ public class TestGameHostingWithIp : IDisposable
     {
         for (int i = 0; i < 10; i++)
         {
-
             try
             {
                 _hostingManager = new HostingManager();
@@ -36,6 +35,8 @@ public class TestGameHostingWithIp : IDisposable
     }
 
     [Fact]
+    [Trait("UserStory", "Join Games")]
+    [Trait("UserStory", "Game Hosting with IP")]
     public void TestGetSignalRConnection()
     {
         //Arrange 
@@ -46,7 +47,6 @@ public class TestGameHostingWithIp : IDisposable
         HubConnection connection = builder.Build();
         connection.StartAsync().Wait();
 
-
         //Assert
         Assert.Equal(HubConnectionState.Connected, connection.State);
 
@@ -54,6 +54,7 @@ public class TestGameHostingWithIp : IDisposable
     }
 
     [Fact]
+    [Trait("UserStory", "Game Hosting with IP")]
     public void TestGetGameReference()
     {
         //Arrange
@@ -77,6 +78,7 @@ public class TestGameHostingWithIp : IDisposable
     }
 
     [Fact]
+    [Trait("UserStory", "Game Hosting with IP")]
     public void RecieveRPCfromHost()
     {
         //Arrange
