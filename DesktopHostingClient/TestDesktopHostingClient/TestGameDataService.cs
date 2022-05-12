@@ -7,28 +7,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace TestDesktopHostingClient
+namespace TestDesktopHostingClient;
+
+[Collection("Sequential")]
+public class TestGameDataService
 {
-    public class TestGameDataService
+    private string _apiUrl = "https://localhost:7236";
+
+    [Fact]
+    public void TestLoadGame()
     {
-        [Fact]
-        public void TestLoadGame()
-        {
-            //Arrange
-            GameDataService gameDataService = new GameDataService();
+        //Arrange
+        GameDataService gameDataService = new GameDataService(_apiUrl);
 
-            //Act
-            Task<GameData> gameDataTask = gameDataService.LoadGameData(1);
+        //Act
+        Task<GameData> gameDataTask = gameDataService.LoadGameData(1);
 
-            gameDataTask.Wait();
+        gameDataTask.Wait();
 
-            GameData gameData = gameDataTask.Result;
+        GameData gameData = gameDataTask.Result;
 
-            //Assert
-            Assert.NotNull(gameData);
-        }
-
-
-
+        //Assert
+        Assert.NotNull(gameData);
     }
+
+
+
 }
+

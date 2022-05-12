@@ -9,6 +9,7 @@ using Xunit;
 
 namespace TestDesktopHostingClient;
 
+[Collection("Sequential")]
 public class TestHostingScreen
 {
     [Fact]

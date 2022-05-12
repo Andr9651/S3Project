@@ -7,24 +7,39 @@ using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.SignalR.Client;
 using DesktopHostingClient.Model;
+using System.Threading;
 
 namespace TestDesktopHostingClient;
 
+[Collection("Sequential")]
 public class TestGameHostingWithIp : IDisposable
 {
     private HostingManager _hostingManager;
     public TestGameHostingWithIp()
     {
-        _hostingManager = new HostingManager();
-        _hostingManager.SetupSignalRHost();
-        _hostingManager.StartHosting().Wait();
+        for (int i = 0; i < 10; i++)
+        {
+
+            try
+            {
+                _hostingManager = new HostingManager();
+                _hostingManager.SetupSignalRHost();
+                _hostingManager.StartHosting().Wait();
+
+                break;
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(500);
+            }
+        }
     }
 
     [Fact]
     public void TestGetSignalRConnection()
     {
         //Arrange 
-        
+
         //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
@@ -35,7 +50,7 @@ public class TestGameHostingWithIp : IDisposable
         //Assert
         Assert.Equal(HubConnectionState.Connected, connection.State);
 
-        connection.DisposeAsync();
+        connection.DisposeAsync().AsTask().Wait();
     }
 
     [Fact]
@@ -43,13 +58,13 @@ public class TestGameHostingWithIp : IDisposable
     {
         //Arrange
         GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData();
 
         //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
         connection.StartAsync().Wait();
-        gameManager.CreateGameData();
 
         Task<bool> gameDataTask = connection.InvokeAsync<bool>("HasGame");
         gameDataTask.Wait();
@@ -58,19 +73,21 @@ public class TestGameHostingWithIp : IDisposable
         //Assert
         Assert.True(gameData);
 
-        connection.DisposeAsync();
+        connection.DisposeAsync().AsTask().Wait();
     }
 
     [Fact]
     public void RecieveRPCfromHost()
     {
         //Arrange
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData();
 
         //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
-        
+
         bool ponged = false;
 
         connection.On("Pong", () =>
@@ -81,10 +98,12 @@ public class TestGameHostingWithIp : IDisposable
         connection.StartAsync().Wait();
         connection.InvokeAsync("Ping").Wait();
 
+        Thread.Sleep(500);
+
         //Assert
         Assert.True(ponged);
 
-        connection.DisposeAsync();
+        connection.DisposeAsync().AsTask().Wait();
     }
 
     public void Dispose()

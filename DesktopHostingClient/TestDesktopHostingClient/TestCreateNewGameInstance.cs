@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace TestDesktopHostingClient;
 
+[Collection("Sequential")]
 public class TestCreateNewGameInstance
 {
     [Fact]

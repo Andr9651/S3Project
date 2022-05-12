@@ -11,13 +11,40 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace TestDesktopHostingClient;
+
+[Collection("Sequential")]
 public class TestBuyBuilding
 {
+    private string _apiUrl = "https://localhost:7236";
+
+    private HostingManager TryStartHost()
+    {
+        HostingManager hostingManager = new HostingManager();
+
+        for (int i = 0; i < 10; i++)
+        {
+            try
+            {
+                hostingManager.SetupSignalRHost();
+                hostingManager.StartHosting().Wait();
+
+                break;
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(500);
+            }
+        }
+
+        return hostingManager;
+    }
+
     [Fact]
+    [Trait("UserStory","Buy Buildings")]
     public void TestPurchasableService()
     {
         //Arrange 
-        PurchasableService purchasableService = new PurchasableService();
+        PurchasableService purchasableService = new PurchasableService(_apiUrl);
 
         //Act 
         Task<List<Purchasable>> task = purchasableService.GetPurchasables();
@@ -29,15 +56,36 @@ public class TestBuyBuilding
     }
 
     [Fact]
+    [Trait("UserStory", "Buy Buildings")]
     public void TestReceivePurchasables()
     {
         // Arrange 
         GameManager gameManager = GameManager.GetInstance();
-        gameManager.SetupGame().Wait();
 
-        HostingManager hostingManager = new HostingManager();
-        hostingManager.SetupSignalRHost();
-        hostingManager.StartHosting().Wait();
+        GameDataService gameDataService = new GameDataService(_apiUrl);
+
+        Task<GameData> gameDataTask = gameDataService.CreateGameData();
+        gameDataTask.Wait();
+
+        GameData gameData = gameDataTask.Result;
+
+        gameManager.CreateGameData(gameData);
+
+        PurchasableService purchasableService = new PurchasableService(_apiUrl);
+
+        Task<List<Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
+        purchasablesTask.Wait();
+
+        List<Purchasable> purchasables = purchasablesTask.Result;
+
+        gameManager.Purchasables = purchasables.ToDictionary(
+            keySelector: purchasable => purchasable.Id,
+            elementSelector: purchasable => purchasable
+        );
+
+        //gameManager.SetupGame().Wait();
+
+        HostingManager hostingManager = TryStartHost();
 
         // Act 
         IHubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
@@ -58,9 +106,12 @@ public class TestBuyBuilding
         //Assert
         Assert.NotNull(receivedPurchasables);
         Assert.True(receivedPurchasables.Count > 0);
+
+        hostingManager.DisposeHost();
     }
 
     [Theory]
+    [Trait("UserStory", "Buy Buildings")]
     [InlineData(10, 5, 1, true)]
     [InlineData(10, 15, 1, false)]
     [InlineData(10, 5, 2, false)]
@@ -109,6 +160,7 @@ public class TestBuyBuilding
     }
 
     [Fact]
+    [Trait("UserStory", "Buy Buildings")]
     public void ReceivePurchaseUpdate()
     {
         // Arrange
@@ -131,14 +183,12 @@ public class TestBuyBuilding
         gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
-        HostingManager hostingManager = new HostingManager();
-        hostingManager.SetupSignalRHost();
-        hostingManager.StartHosting().Wait();
+        HostingManager hostingManager = TryStartHost();
 
         HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection hubConnection = hubConnectionBuilder.Build();
-        
+
         // Arrange
         bool receivedPurchase = false;
 
@@ -150,7 +200,7 @@ public class TestBuyBuilding
 
         gameManager.TryBuyPurchasable(1);
         Thread.Sleep(500);
-        
+
         // Assert
         Assert.True(receivedPurchase);
 
@@ -158,6 +208,7 @@ public class TestBuyBuilding
     }
 
     [Fact]
+    [Trait("UserStory","Buy Buildings")]
     public void TryBuyPurchasableRPC()
     {
         // Arrange
@@ -180,9 +231,7 @@ public class TestBuyBuilding
         gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
-        HostingManager hostingManager = new HostingManager();
-        hostingManager.SetupSignalRHost();
-        hostingManager.StartHosting().Wait();
+        HostingManager hostingManager = TryStartHost();
 
         HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
@@ -199,7 +248,7 @@ public class TestBuyBuilding
 
         hubConnection.InvokeAsync("TryBuyPurchasable", 1);
         Thread.Sleep(500);
-        
+
         // Assert
         Assert.True(receivedPurchase);
 

@@ -14,7 +14,7 @@ public class Endpoints
     {
         webApplication.MapGet("/Purchasable", () =>
         {
-            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
@@ -36,7 +36,7 @@ public class Endpoints
 
         webApplication.MapGet("/GameInstance/{id}", (int id) =>
         {
-            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
@@ -58,7 +58,7 @@ public class Endpoints
 
         webApplication.MapPost("/GameInstance", () =>
         {
-            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
@@ -79,7 +79,7 @@ public class Endpoints
 
         webApplication.MapPut("/GameInstance", ([FromBody] GameInstance gameInstance) =>
         {
-            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 

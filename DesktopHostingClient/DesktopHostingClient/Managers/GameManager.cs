@@ -55,6 +55,7 @@ public class GameManager
 
     private GameManager()
     {
+        Purchasables = new Dictionary<int, Purchasable>();
 
     }
 

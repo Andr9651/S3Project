@@ -9,17 +9,39 @@ using Microsoft.AspNetCore.SignalR.Client;
 using System.Threading;
 namespace TestDesktopHostingClient;
 
+[Collection("Sequential")]
 public class TestSeeBalance
 {
+    private HostingManager TryStartHost()
+    {
+        HostingManager hostingManager = new HostingManager();
+
+        for (int i = 0; i < 10; i++)
+        {
+
+            try
+            {
+                hostingManager.SetupSignalRHost();
+                hostingManager.StartHosting().Wait();
+
+                break;
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(500);
+            }
+        }
+
+        return hostingManager;
+    }
+
     [Fact]
     public void TestReciveBalanceUpdate()
     {
         // Arrange 
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData();
-        HostingManager hostingManager = new HostingManager();
-        hostingManager.SetupSignalRHost();
-        hostingManager.StartHosting().Wait();
+        HostingManager hostingManager = TryStartHost();
 
         // Act 
         IHubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
@@ -36,5 +58,9 @@ public class TestSeeBalance
 
         //Assert
         Assert.True(receivedUpdate);
+
+        connection.DisposeAsync().AsTask().Wait();
+
+        hostingManager.DisposeHost();
     }
 }

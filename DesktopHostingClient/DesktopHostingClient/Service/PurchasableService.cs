@@ -16,6 +16,12 @@ public class PurchasableService
     {
         _apiUrl = ConfigurationManager.ConnectionStrings["APIConnectionString_LocalHost"].ToString();
     }
+
+    public PurchasableService(string apiUrl)
+    {
+        _apiUrl = apiUrl;
+    }
+
     public async Task<List<Purchasable>> GetPurchasables()
     {
         HttpClient client = new HttpClient();

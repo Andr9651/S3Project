@@ -9,6 +9,7 @@ using Xunit;
 
 namespace TestDesktopHostingClient;
 
+[Collection("Sequential")]
 public class TestShowRaceCondition
 {
     [Theory]
@@ -16,8 +17,8 @@ public class TestShowRaceCondition
     [InlineData(100)]
     [InlineData(1000)]
     [InlineData(10000)]
-    [InlineData(100000)]
-    [InlineData(100000000)]
+    [InlineData(1000000)]
+    //[InlineData(100000000)]
     public void StressTestTryBuyPurchasable(int repetitions)
     {
         //Arrange

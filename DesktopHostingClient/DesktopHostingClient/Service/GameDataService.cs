@@ -19,6 +19,11 @@ public class GameDataService
         _apiUrl = ConfigurationManager.ConnectionStrings["APIConnectionString_LocalHost"].ToString();
     }
 
+    public GameDataService(string apiUrl)
+    {
+        _apiUrl = apiUrl;
+    }
+
     public async Task<GameData> CreateGameData()
     {
         HttpClient client = new HttpClient();
