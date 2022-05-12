@@ -14,7 +14,9 @@ public class Endpoints
     {
         webApplication.MapGet("/Purchasable", () =>
         {
-            SQLGameDataService gameDataService = new SQLGameDataService();
+            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+
+            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
             List<PurchasableDto> purchasables = gameDataService.GetPurchasables();
 
@@ -34,9 +36,11 @@ public class Endpoints
 
         webApplication.MapGet("/GameInstance/{id}", (int id) =>
         {
-            SQLGameDataService gameDataService = new SQLGameDataService();
+            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
 
-            GameInstance gameInstance =gameDataService.GetGameInstance(id);
+            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
+
+            GameInstance gameInstance = gameDataService.GetGameInstance(id);
 
             IResult HTTPResult;
 
@@ -54,9 +58,11 @@ public class Endpoints
 
         webApplication.MapPost("/GameInstance", () =>
         {
-            SQLGameDataService sQLGameDataService = new SQLGameDataService();
+            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
 
-            GameInstance gameInstance = sQLGameDataService.CreateGameInstance();
+            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
+
+            GameInstance gameInstance = gameDataService.CreateGameInstance();
 
             IResult HTTPResult;
 
@@ -71,10 +77,13 @@ public class Endpoints
             return HTTPResult;
         });
 
-        webApplication.MapPut("/GameInstance", ([FromBody]GameInstance gameInstance) =>
+        webApplication.MapPut("/GameInstance", ([FromBody] GameInstance gameInstance) =>
         {
-            SQLGameDataService sqlGameDataService = new SQLGameDataService();
-            bool Success = sqlGameDataService.SaveGameInstance(gameInstance);
+            string connectionString = webApplication.Configuration.GetConnectionString("SQLConnectionString");
+
+            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
+
+            bool Success = gameDataService.SaveGameInstance(gameInstance);
 
             IResult HTTPResult;
 

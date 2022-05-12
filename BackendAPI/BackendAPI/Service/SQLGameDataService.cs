@@ -1,12 +1,18 @@
 ﻿using BackendAPI.Model.DTO;
 using System.Data.SqlClient;
 using Dapper;
+using System.Configuration;
 
 namespace BackendAPI.Service;
 
 public class SQLGameDataService
 {
-    private string _dbConnectionString = "Data Source=.;Initial Catalog=CookieClicker;Integrated Security=True";
+    private readonly string _dbConnectionString;
+
+    public SQLGameDataService(string connectionString)
+    {
+        _dbConnectionString = connectionString;
+    }
 
     public List<PurchasableDto> GetPurchasables()
     {
