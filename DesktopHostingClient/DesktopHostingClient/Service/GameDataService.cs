@@ -6,18 +6,26 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace DesktopHostingClient.Service;
 
 public class GameDataService
 {
+    private string _apiUrl;
+
+    public GameDataService()
+    {
+        _apiUrl = ConfigurationManager.ConnectionStrings["APIConnectionString_LocalHost"].ToString();
+    }
+
     public async Task<GameData> CreateGameData()
     {
         HttpClient client = new HttpClient();
 
         HttpContent content = new StringContent("");
 
-        HttpResponseMessage response = await client.PostAsync("https://localhost:7236/GameInstance", content);
+        HttpResponseMessage response = await client.PostAsync($"{_apiUrl}/GameInstance", content);
 
         GameData gameData = null;
 
@@ -34,7 +42,7 @@ public class GameDataService
 
         HttpContent content = JsonContent.Create(gameData);
 
-        HttpResponseMessage response = await client.PutAsync("https://localhost:7236/GameInstance", content);
+        HttpResponseMessage response = await client.PutAsync($"{_apiUrl}/GameInstance", content);
 
         return response.IsSuccessStatusCode;
     }

@@ -15,4 +15,10 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="6.0.4" />
 	</ItemGroup>
 	
+	<ItemGroup>
+	  <None Update="App.config">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+	
 </Project>
