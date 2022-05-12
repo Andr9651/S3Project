@@ -28,15 +28,15 @@
     [Parameter]
     public string Ip { get; set; }
 
-    public int Balance { get; set; } = 0;
+    private int Balance { get; set; } = 0;
 
-    public List<Purchasable> Purchasables { get; set; } = new List<Purchasable>();
+    private List<Purchasable> Purchasables { get; set; } = new List<Purchasable>();
 
     private Dictionary<int, int> _purchases = new Dictionary<int, int>();
 
     private bool _delay;
 
-    GameManager gameManager = new GameManager();
+    private GameManager gameManager = new GameManager();
 
     private async Task StartConnection()
     {
@@ -49,7 +49,7 @@
         Ip = "ping";
     }
 
-    public int GetPurchaseAmount(int purchasableId)
+    private int GetPurchaseAmount(int purchasableId)
     {
         int amount = 0;
 
@@ -61,7 +61,7 @@
         return amount;
     }
 
-    public async void TryBuyPurchasable(int purchasableId)
+    private async void TryBuyPurchasable(int purchasableId)
     {
         Purchasable purchasable = Purchasables.Find(p => p.Id == purchasableId);
 
