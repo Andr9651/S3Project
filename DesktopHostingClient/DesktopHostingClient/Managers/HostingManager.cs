@@ -14,29 +14,35 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace DesktopHostingClient.Managers;
-
 public class HostingManager
 {
-    private IHost _host;
-    private string _port;
-    private IHubContext<GameHub> _hubContext;
-
     public string Port
     {
         get { return _port; }
         set { _port = value; }
     }
 
+    private IHost _host;
+    private string _port;
+    private IHubContext<GameHub> _hubContext;
+
     public HostingManager()
     {
         _port = "5100";
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
-        gameDataManager.OnBalanceChanged += PushBalanceToClient;
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.OnBalanceChanged += PushBalanceToClients;
+        gameManager.OnPurchase += PushPurchaseToClients;
     }
 
-    public void PushBalanceToClient(int balance)
+    private void PushPurchaseToClients(int purchaseId, int amount)
     {
-        _hubContext.Clients.All.SendAsync("BalanceUpdate", balance);
+        _hubContext?.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
+    }
+
+    private void PushBalanceToClients(int balance)
+    {
+        _hubContext?.Clients.All.SendAsync("BalanceUpdate", balance);
     }
 
     public void SetupSignalRHost()
@@ -60,7 +66,6 @@ public class HostingManager
         Action<IApplicationBuilder> applicationBuilder = app =>
         {
             app.UseCors("test");
-
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
         };
@@ -70,36 +75,29 @@ public class HostingManager
             webBuilder.UseUrls($"http://localhost:{_port}");
             webBuilder.ConfigureServices(serviceCollection);
             webBuilder.Configure(applicationBuilder);
-
         };
 
         hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
 
         _host = hostBuilder.Build();
-
-
-
-        Console.WriteLine(_host);
     }
+
     public async Task StartHosting()
     {
         await _host.StartAsync();
-        GameDataManager gameDataManager =  GameDataManager.GetInstance();
-        gameDataManager.StartBalanceUpdateThread();
+
+        GameManager gameDataManager =  GameManager.GetInstance();
 
         _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
     }
 
     public void DisposeHost()
     {
-        // Check if host is null if its not null it will dispose the host
+        // The ? checks if host is null if its not null it will dispose the host
         _host?.Dispose();
-        GameDataManager gameDataManager = GameDataManager.GetInstance();
-        gameDataManager.StopBalanceUpdateThread();
-
     }
 
-    public async Task<string> GetPublicIP()
+    public async Task<string> GetPublicIp()
     {
         HttpClient client = new HttpClient();
 
@@ -107,5 +105,4 @@ public class HostingManager
 
         return ip;
     }
-
 }

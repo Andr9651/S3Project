@@ -16,6 +16,8 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Button x:Name="ButtonNewGame" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Margin="23,50,0,0" Width="104" Click="ButtonNewGame_Click"/>
+        <Button Content="Load Game" HorizontalAlignment="Left" Margin="23,167,0,0" VerticalAlignment="Top" Width="104" Click="Load_Game_Click"/>
+        <TextBox x:Name="LoadGameTextBox" TextWrapping="Wrap" Margin="148,142,148,30"/>
 
     </Grid>
 </Window>

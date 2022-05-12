@@ -12,6 +12,8 @@ namespace TestWebApp;
 public class SeeBalance
 {
     [Fact]
+    [Trait("UserStory", "See Balance")]
+
     public void TestSeebalance()
     {
         //Arrange 
@@ -25,11 +27,13 @@ public class SeeBalance
             receivedUpdate = true;
         };
         Thread.Sleep(500);
-       
+
         //Assert
         Assert.True(receivedUpdate);
     }
+
     [Fact]
+    [Trait("UserStory", "See Balance")]
     public void TestGetBalanceValue()
     {
         //Arrange 
@@ -37,7 +41,7 @@ public class SeeBalance
 
         //Act 
         gameManager.ConnectToGame("127.0.0.1:5100");
-       
+
         int balance = 0;
         gameManager.BalanceUpdateEvent += (newBalance) =>
         {
@@ -48,7 +52,5 @@ public class SeeBalance
 
         //Assert
         Assert.True(oldBalance < balance);
-       
-
     }
 }

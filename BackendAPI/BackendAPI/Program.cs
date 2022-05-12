@@ -5,10 +5,9 @@ using System.Data.SqlClient;
 
 
 var builder = WebApplication.CreateBuilder(args);
-// Little comment.
+
 // Add services to the container.
 
-//builder.Services.AddControllers();
 
 
 var app = builder.Build();
@@ -20,7 +19,5 @@ app.UseHttpsRedirection();
 //app.UseAuthorization();
 
 Endpoints.SetupEndpoints(app);
-
-
 
 app.Run();

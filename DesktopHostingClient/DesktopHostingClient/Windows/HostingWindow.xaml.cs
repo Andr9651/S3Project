@@ -14,31 +14,39 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace DesktopHostingClient.Windows;
-
 public partial class HostingWindow : Window
 {
     public HostingManager HostingManager { get; set; }
-    public GameDataManager GameDataManager { get; set; }
-
-    public HostingWindow()
+    public GameManager GameManager { get; set; }
+    private int? _loadGameId { get; set; }
+    public HostingWindow(int? loadGameId = null)
     {
         InitializeComponent();
-        GameDataManager = GameDataManager.GetInstance();
+        GameManager = GameManager.GetInstance();
         HostingManager = new HostingManager();
+        _loadGameId = loadGameId;
     }
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        GameDataManager.CreateGameData();
-        LabelIPAdress.Content = await HostingManager.GetPublicIP();
+        
+
+        LabelIpAddress.Content = await HostingManager.GetPublicIp();
+
         HostingManager.SetupSignalRHost();
+
         await HostingManager.StartHosting();
+
+        await GameManager.SetupGame(_loadGameId);
+
+        GameId.Content = GameManager.GetGameId();
+
         LabelPort.Content = HostingManager.Port;
-       
     }
 
     private void OnClose(object sender, EventArgs e)
     {
+        GameManager.ShutdownGame();
         HostingManager.DisposeHost();
     }
 
@@ -46,6 +54,12 @@ public partial class HostingWindow : Window
     {
         MainWindow mainWindow = new MainWindow();
         mainWindow.Show();  
+
         this.Close();
+    }
+
+    private async void Save_Game_Click(object sender, RoutedEventArgs e)
+    {
+        bool result = await GameManager.SaveGame();
     }
 }

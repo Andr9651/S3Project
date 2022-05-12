@@ -9,15 +9,17 @@ using Xunit;
 
 namespace TestDesktopHostingClient;
 
-public class HostingScreen
+[Collection("Sequential")]
+public class TestHostingScreen
 {
     [Fact]
+    [Trait("UserStory", "Hosting Screen")]
     public async void TestGetHostIp ()
     {
         //Arrange
         HostingManager hostingManager = new HostingManager();
         //Act 
-        string hostIp = await hostingManager.GetPublicIP();
+        string hostIp = await hostingManager.GetPublicIp();
         //Assert
         Assert.NotNull(hostIp);
     }

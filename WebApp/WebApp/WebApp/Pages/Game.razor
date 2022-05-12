@@ -1,54 +1,121 @@
 ﻿@page "/Game"
 @page "/Game/{ip}"
 @using WebApp.Managers
-
+@using static WebApp.Model.Purchasables
+@inject IJSRuntime JsRunTime
 
 <h3>Game</h3>
 
-<p role="status">Ip: @ip</p>
+<p role="status">Ip: @Ip</p>
 
-<p role="status">Balance: @balance</p>
+<p role="status">Balance: @Balance</p>
 
 
 <button class="btn btn-primary" @onclick="@StartConnection">Click me</button>
 <button class="btn btn-primary" @onclick="@Ping">Ping</button>
 
-@code {
+@foreach (Purchasable p in Purchasables)
+{
+    <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+        @p.Name @p.Price Count:@GetPurchaseAmount(p.Id)
+    </button>
+}
+<input type="checkbox" value="@_delay" @bind="@_delay">
+<label>Delay</label>
 
-
+@code
+{
     [Parameter]
-    public string ip { get; set; }
+    public string Ip { get; set; }
 
-    public int balance { get; set; } = 0;
+    private int Balance { get; set; } = 0;
 
-    GameManager gameManager = new GameManager();
+    private List<Purchasable> Purchasables { get; set; } = new List<Purchasable>();
+
+    private Dictionary<int, int> _purchases = new Dictionary<int, int>();
+
+    private bool _delay;
+
+    private GameManager gameManager = new GameManager();
 
     private async Task StartConnection()
     {
-        await gameManager.ConnectToGame(ip);
+        await gameManager.ConnectToGame(Ip);
     }
 
     private void Ping()
     {
         gameManager.PingServer();
-        ip = "ping";
+        Ip = "ping";
+    }
+
+    private int GetPurchaseAmount(int purchasableId)
+    {
+        int amount = 0;
+
+        if (_purchases.ContainsKey(purchasableId))
+        {
+            amount = _purchases[purchasableId];
+        }
+
+        return amount;
+    }
+
+    private async void TryBuyPurchasable(int purchasableId)
+    {
+        Purchasable purchasable = Purchasables.Find(p => p.Id == purchasableId);
+
+        if (Balance >= purchasable.Price)
+        {
+            if (_delay)
+            {
+                await Task.Delay(5000);
+            }
+            bool success = await gameManager.TryBuyPurchasable(purchasableId);
+            if (!success)
+            {
+                await JsRunTime.InvokeVoidAsync("alert", "Somebody bought something before you!");
+            }
+        }
+        else
+        {
+            await JsRunTime.InvokeVoidAsync("alert", "Insufficient funds!");
+        }
     }
 
     protected override void OnInitialized()
     {
+        Purchasables = new List<Purchasable>();
         base.OnInitialized();
 
         gameManager.BalanceUpdateEvent += (balance) =>
         {
-            this.balance = balance;
+            this.Balance = balance;
             InvokeAsync(StateHasChanged);
         };
 
         gameManager.PongEvent += () =>
         {
-            ip = "Pong";
+            Ip = "Pong";
             InvokeAsync(StateHasChanged);
         };
 
+        gameManager.ReceivePurchasablesEvent += (purchasables) =>
+        {
+            Purchasables = purchasables;
+            InvokeAsync(StateHasChanged);
+        };
+
+        gameManager.ReceivePurchasesEvent += (purchases) =>
+        {
+            _purchases = purchases;
+            InvokeAsync(StateHasChanged);
+        };
+
+        gameManager.ReceivePurchaseUpdateEvent += (purchaseId, amount) =>
+        {
+            _purchases[purchaseId] = amount;
+            InvokeAsync(StateHasChanged);
+        };
     }
 }
