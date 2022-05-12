@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.SignalR.Client;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using System.Threading;
 
 namespace TestDesktopHostingClient;

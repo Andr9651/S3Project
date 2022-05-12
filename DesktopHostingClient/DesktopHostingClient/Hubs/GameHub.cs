@@ -1,5 +1,5 @@
 ﻿using DesktopHostingClient.Managers;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Linq;

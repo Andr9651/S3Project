@@ -1,5 +1,5 @@
 ﻿using DesktopHostingClient.Managers;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

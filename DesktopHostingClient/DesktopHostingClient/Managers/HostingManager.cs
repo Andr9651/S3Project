@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace DesktopHostingClient.Managers;
 public class HostingManager

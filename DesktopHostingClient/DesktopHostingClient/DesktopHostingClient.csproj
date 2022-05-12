@@ -12,7 +12,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="6.0.4" />
+	  <Reference Include="ModelLibrary">
+	    <HintPath>..\..\ModelLibrary\bin\Debug\net6.0\ModelLibrary.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 	
 	<ItemGroup>

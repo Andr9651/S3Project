@@ -1,5 +1,5 @@
 ﻿using DesktopHostingClient.Managers;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using DesktopHostingClient.Service;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
