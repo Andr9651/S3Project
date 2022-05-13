@@ -1,10 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace WebApp.Managers;
-
 public class JoinGameManager
 {
-
     public static bool ValidateIP(string ip)
     {
         bool isValidIp = false;
@@ -34,7 +32,6 @@ public class JoinGameManager
             }
         }
 
-
         return isValidIp;
     }
 
@@ -42,7 +39,4 @@ public class JoinGameManager
     {
         return $"/Game/{ip}";
     }
-
 }
-
-

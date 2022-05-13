@@ -1,4 +1,4 @@
-﻿using DesktopHostingClient.Model;
+﻿using ModelLibrary.Model;
 using DesktopHostingClient.Service;
 using System;
 using System.Collections.Generic;

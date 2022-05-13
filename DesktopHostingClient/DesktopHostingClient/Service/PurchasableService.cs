@@ -1,4 +1,4 @@
-﻿using DesktopHostingClient.Model;
+﻿using ModelLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,19 +22,19 @@ public class PurchasableService
         _apiUrl = apiUrl;
     }
 
-    public async Task<List<Purchasable>> GetPurchasables()
+    public async Task<Dictionary<int, Purchasable>> GetPurchasables()
     {
         HttpClient client = new HttpClient();
 
         HttpResponseMessage response = await client.GetAsync($"{_apiUrl}/Purchasable");
 
-        List<Purchasable> foundPurchasable = null;
+        Dictionary<int, Purchasable> foundPurchasables = null;
 
         if (response.IsSuccessStatusCode)
         {
-            foundPurchasable = await response.Content.ReadFromJsonAsync<List<Purchasable>>();
+            foundPurchasables = await response.Content.ReadFromJsonAsync<Dictionary<int, Purchasable>>();
         }
 
-        return foundPurchasable;
+        return foundPurchasables;
     }
 }

@@ -1,6 +1,6 @@
-﻿using BackendAPI.Model;
+﻿using ModelLibrary.Model;
 using Dapper;
-using BackendAPI.Model.DTO;
+using BackendAPI.DBModel;
 using BackendAPI.Service;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ public class Endpoints
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
-            List<PurchasableDto> purchasables = gameDataService.GetPurchasables();
+            Dictionary<int, DBPurchasable> purchasables = gameDataService.GetPurchasables();
 
             IResult HTTPResult;
 
@@ -34,56 +34,56 @@ public class Endpoints
             return HTTPResult;
         });
 
-        webApplication.MapGet("/GameInstance/{id}", (int id) =>
+        webApplication.MapGet("/GameData/{id}", (int id) =>
         {
             string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
-            GameInstance gameInstance = gameDataService.GetGameInstance(id);
+            GameData gameData = gameDataService.GetGameData(id);
 
             IResult HTTPResult;
 
-            if (gameInstance is null)
+            if (gameData is null)
             {
                 HTTPResult = Results.NotFound();
             }
             else
             {
-                HTTPResult = Results.Ok(gameInstance);
+                HTTPResult = Results.Ok(gameData);
             }
 
             return HTTPResult;
         });
 
-        webApplication.MapPost("/GameInstance", () =>
+        webApplication.MapPost("/GameData", () =>
         {
             string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
-            GameInstance gameInstance = gameDataService.CreateGameInstance();
+            GameData gameData = gameDataService.CreateGameData();
 
             IResult HTTPResult;
 
-            if (gameInstance is null || gameInstance.Id == 0)
+            if (gameData is null || gameData.Id == 0)
             {
                 HTTPResult = Results.StatusCode(500);
             }
             else
             {
-                HTTPResult = Results.Ok(gameInstance);
+                HTTPResult = Results.Ok(gameData);
             }
             return HTTPResult;
         });
 
-        webApplication.MapPut("/GameInstance", ([FromBody] GameInstance gameInstance) =>
+        webApplication.MapPut("/GameData", ([FromBody] GameData gameData) =>
         {
             string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
-            bool Success = gameDataService.SaveGameInstance(gameInstance);
+            bool Success = gameDataService.SaveGameData(gameData);
 
             IResult HTTPResult;
 

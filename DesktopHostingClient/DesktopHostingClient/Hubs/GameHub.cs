@@ -1,5 +1,5 @@
 ﻿using DesktopHostingClient.Managers;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Linq;
@@ -19,7 +19,7 @@ public class GameHub : Hub
     {
         GameManager.NotifyBalanceChanged();
 
-        List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
+        Dictionary<int, Purchasable> purchasables = GameManager.Purchasables;
 
         Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
 

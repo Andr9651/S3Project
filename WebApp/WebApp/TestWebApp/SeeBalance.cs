@@ -13,27 +13,6 @@ public class SeeBalance
 {
     [Fact]
     [Trait("UserStory", "See Balance")]
-
-    public void TestSeebalance()
-    {
-        //Arrange 
-        GameManager gameManager = new GameManager();
-
-        //Act 
-        gameManager.ConnectToGame("127.0.0.1:5100");
-        bool receivedUpdate = false;
-        gameManager.BalanceUpdateEvent += (balance) =>
-        {
-            receivedUpdate = true;
-        };
-        Thread.Sleep(500);
-
-        //Assert
-        Assert.True(receivedUpdate);
-    }
-
-    [Fact]
-    [Trait("UserStory", "See Balance")]
     public void TestGetBalanceValue()
     {
         //Arrange 
@@ -42,15 +21,11 @@ public class SeeBalance
         //Act 
         gameManager.ConnectToGame("127.0.0.1:5100");
 
-        int balance = 0;
-        gameManager.BalanceUpdateEvent += (newBalance) =>
-        {
-            balance = newBalance;
-        };
-        int oldBalance = balance;
+        int oldBalance = gameManager.GetBalance();
+
         Thread.Sleep(1003);
 
         //Assert
-        Assert.True(oldBalance < balance);
+        Assert.True(oldBalance < gameManager.GetBalance());
     }
 }

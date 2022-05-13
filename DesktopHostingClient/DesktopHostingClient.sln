@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopHostingClient", "DesktopHostingClient\DesktopHostingClient.csproj", "{C2F0FD63-1E68-445A-A8B6-6C8644B39FAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDesktopHostingClient", "TestDesktopHostingClient\TestDesktopHostingClient.csproj", "{802EE7E0-DEAA-46E8-89BD-CB0EDF109B66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDesktopHostingClient", "TestDesktopHostingClient\TestDesktopHostingClient.csproj", "{802EE7E0-DEAA-46E8-89BD-CB0EDF109B66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelLibrary", "..\ModelLibrary\ModelLibrary.csproj", "{85A15F74-01D2-4AC8-8B3F-4468E5BC85D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{802EE7E0-DEAA-46E8-89BD-CB0EDF109B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{802EE7E0-DEAA-46E8-89BD-CB0EDF109B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{802EE7E0-DEAA-46E8-89BD-CB0EDF109B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85A15F74-01D2-4AC8-8B3F-4468E5BC85D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85A15F74-01D2-4AC8-8B3F-4468E5BC85D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85A15F74-01D2-4AC8-8B3F-4468E5BC85D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85A15F74-01D2-4AC8-8B3F-4468E5BC85D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

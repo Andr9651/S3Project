@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using System.Threading;
 using DesktopHostingClient.Service;
 
@@ -121,7 +121,7 @@ public class GameManager
     public async Task SetupGame(int? loadedGameId = null)
     {
         PurchasableService purchasableService = new PurchasableService();
-        List<Purchasable> purchasables = await purchasableService.GetPurchasables();
+        Purchasables = await purchasableService.GetPurchasables();
         GameDataService gameDataService = new GameDataService();
 
         if (loadedGameId is null)
@@ -132,12 +132,6 @@ public class GameManager
         {
             GameData = await gameDataService.LoadGameData(loadedGameId.Value);
         }
-
-        Purchasables = purchasables.ToDictionary(
-            keySelector: purchasable => purchasable.Id,
-            elementSelector: purchasable => purchasable
-        );
-
 
         StartBalanceUpdateThread();
     }
@@ -219,9 +213,19 @@ public class GameManager
         return GameData.Id;
     }
 
-    public Task<bool> SaveGame()
+    public async Task<bool> SaveGame()
     {
-        GameDataService gameDataService = new GameDataService();
-        return gameDataService.SaveGameData(GameData);
+        bool isSuccess = false;
+        try
+        {
+            GameDataService gameDataService = new GameDataService();
+            isSuccess = await gameDataService.SaveGameData(GameData);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return isSuccess;
     }
 }

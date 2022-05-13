@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ModelLibrary\ModelLibrary.csproj" />
     <ProjectReference Include="..\DesktopHostingClient\DesktopHostingClient.csproj" />
   </ItemGroup>
 

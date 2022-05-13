@@ -1,4 +1,4 @@
-﻿using DesktopHostingClient.Model;
+﻿using ModelLibrary.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ public class GameDataService
 
         HttpContent content = new StringContent("");
 
-        HttpResponseMessage response = await client.PostAsync($"{_apiUrl}/GameInstance", content);
+        HttpResponseMessage response = await client.PostAsync($"{_apiUrl}/GameData", content);
 
         GameData gameData = null;
 
@@ -47,7 +47,7 @@ public class GameDataService
 
         HttpContent content = JsonContent.Create(gameData);
 
-        HttpResponseMessage response = await client.PutAsync($"{_apiUrl}/GameInstance", content);
+        HttpResponseMessage response = await client.PutAsync($"{_apiUrl}/GameData", content);
 
         return response.IsSuccessStatusCode;
     }
@@ -56,7 +56,7 @@ public class GameDataService
     {
         HttpClient client = new HttpClient();
 
-        HttpResponseMessage response = await client.GetAsync($"https://localhost:7236/GameInstance/{id}");
+        HttpResponseMessage response = await client.GetAsync($"{_apiUrl}/GameData/{id}");
 
         GameData gameData = null;
 

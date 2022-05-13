@@ -1,5 +1,5 @@
 ﻿using DesktopHostingClient.Managers;
-using DesktopHostingClient.Model;
+using ModelLibrary.Model;
 using DesktopHostingClient.Service;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
@@ -47,9 +47,9 @@ public class TestBuyBuilding
         PurchasableService purchasableService = new PurchasableService(_apiUrl);
 
         //Act 
-        Task<List<Purchasable>> task = purchasableService.GetPurchasables();
+        Task<Dictionary<int, Purchasable>> task = purchasableService.GetPurchasables();
         task.Wait();
-        List<Purchasable> foundPurchasable = task.Result;
+        Dictionary<int, Purchasable> foundPurchasable = task.Result;
 
         //Assert
         Assert.NotNull(foundPurchasable);
@@ -73,15 +73,10 @@ public class TestBuyBuilding
 
         PurchasableService purchasableService = new PurchasableService(_apiUrl);
 
-        Task<List<Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
+        Task<Dictionary<int, Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
         purchasablesTask.Wait();
 
-        List<Purchasable> purchasables = purchasablesTask.Result;
-
-        gameManager.Purchasables = purchasables.ToDictionary(
-            keySelector: purchasable => purchasable.Id,
-            elementSelector: purchasable => purchasable
-        );
+        gameManager.Purchasables = purchasablesTask.Result;
 
         //gameManager.SetupGame().Wait();
 
@@ -92,9 +87,9 @@ public class TestBuyBuilding
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = hubConnectionBuilder.Build();
 
-        List<Purchasable> receivedPurchasables = null;
+        Dictionary<int, Purchasable> receivedPurchasables = null;
 
-        connection.On<List<Purchasable>>("ReceivePurchasables", (purchasables) =>
+        connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", (purchasables) =>
         {
             receivedPurchasables = purchasables;
         });

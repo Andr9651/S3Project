@@ -1,7 +1,9 @@
-﻿using BackendAPI.Model.DTO;
+﻿using BackendAPI.DBModel;
+using ModelLibrary.Model;
 using System.Data.SqlClient;
 using Dapper;
 using System.Configuration;
+using System.Linq;
 
 namespace BackendAPI.Service;
 
@@ -14,37 +16,37 @@ public class SQLGameDataService
         _dbConnectionString = connectionString;
     }
 
-    public List<PurchasableDto> GetPurchasables()
+    public Dictionary<int, DBPurchasable> GetPurchasables()
     {
-        List<PurchasableDto>? purchasableDtos = null;
+        Dictionary<int,DBPurchasable> dbPurchasables = null;
 
         string sqlQuery = "select * from Purchasable";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            purchasableDtos = connection.Query<PurchasableDto>(sqlQuery).ToList();
+            dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToDictionary(p => p.Id);
         }
 
-        return purchasableDtos;
+        return dbPurchasables;
     }
 
-    public bool SaveGameInstance(GameInstance gameInstance)
+    public bool SaveGameData(GameData gameData)
     {
         bool result = false;
 
-        string sqlQueryUpdateGameInstance = "Update GameInstance " +
+        string sqlQueryUpdateGameData = "Update GameData " +
             "set balance = @balance, hostIp = @hostIp " +
             "where id = @id";
         string sqlQueryUpdateGamePurchases = "update gamepurchase " +
             "set amount = @amount " +
-            "where gameinstanceId = @gameInstanceId and purchasableId = @purchasableId " +
+            "where gameDataId = @gameDataId and purchasableId = @purchasableId " +
             "if @@rowcount = 0 " +
             "insert into GamePurchase " +
-            "Values (@gameInstanceId, @purchasableId, @amount)";
+            "Values (@gameDataId, @purchasableId, @amount)";
 
-        GameInstanceDto gameInstanceDto = gameInstance.GetGameInstanceDto();
+        DBGameData dbGameData = ModelConverter.ToDBGameData(gameData);
 
-        List<GamePurchaseDto> gamePurchaseDtoList = gameInstance.GetGamePurchaseDtos();
+        List<DBGamePurchase> dbGamePurchases = ModelConverter.ToDBGamePurchases(gameData);
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
@@ -53,22 +55,22 @@ public class SQLGameDataService
             {
                 bool error = false;
 
-                int linesChangedGameInstance = connection.Execute(
-                    sqlQueryUpdateGameInstance,
-                    gameInstanceDto,
+                int linesChangedGameData = connection.Execute(
+                    sqlQueryUpdateGameData,
+                    dbGameData,
                     SqlTransaction
                 );
 
-                if (linesChangedGameInstance == 0)
+                if (linesChangedGameData == 0)
                 {
                     error = true;
                 }
 
-                if (!error && gamePurchaseDtoList.Count > 0)
+                if (!error && dbGamePurchases.Count > 0)
                 {
                     int linesChangedGamePurchases = connection.Execute(
                         sqlQueryUpdateGamePurchases,
-                        gamePurchaseDtoList,
+                        dbGamePurchases,
                         SqlTransaction
 
                     );
@@ -95,48 +97,48 @@ public class SQLGameDataService
         return result;
     }
 
-    public GameInstance CreateGameInstance()
+    public GameData CreateGameData()
     {
-        GameInstanceDto gameInstanceDto = new GameInstanceDto();
+        DBGameData dbGameData = new DBGameData();
 
-        string sqlQueryCreateGameInstance = "insert into GameInstance " +
+        string sqlQueryCreateGameData = "insert into GameData " +
             "output inserted.id " +
             "values (@Balance, @Hostip)";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            gameInstanceDto.Id = connection.QuerySingle<int>(sqlQueryCreateGameInstance, gameInstanceDto);
+            dbGameData.Id = connection.QuerySingle<int>(sqlQueryCreateGameData, dbGameData);
         }
-        GameInstance gameInstance = new GameInstance(gameInstanceDto);
+        GameData gameData = ModelConverter.ToGameData(dbGameData);
 
-        return gameInstance;
+        return gameData;
     }
 
-    public GameInstance GetGameInstance(int id)
+    public GameData GetGameData(int id)
     {
-        GameInstance gameInstance = null;
+        GameData gameData = null;
 
-        string sqlQueryGetGameInstanceDto = "select * from GameInstance " +
+        string sqlQueryGetDBGameData = "select * from GameData " +
             "where id = @id ";
-        string sqlQueryGetGamePurchaseDto = "select * from GamePurchase " +
-            "where GameInstanceId = @id"; 
+        string sqlQueryGetDBGamePurchases = "select * from GamePurchase " +
+            "where GameDataId = @id"; 
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            GameInstanceDto gameInstanceDto = null;
-            List<GamePurchaseDto> gamePurchasesDto = null;
+            DBGameData dbGameData = null;
+            List<DBGamePurchase> dbGamePurchases = null;
 
-            gameInstanceDto = connection.QuerySingleOrDefault<GameInstanceDto>(sqlQueryGetGameInstanceDto, new {id = id});
+            dbGameData = connection.QuerySingleOrDefault<DBGameData>(sqlQueryGetDBGameData, new {id = id});
 
-            if (gameInstanceDto is not null)
+            if (dbGameData is not null)
             {
-                gamePurchasesDto = connection.Query<GamePurchaseDto>(sqlQueryGetGamePurchaseDto, new { id = id }).ToList();
+                dbGamePurchases = connection.Query<DBGamePurchase>(sqlQueryGetDBGamePurchases, new { id = id }).ToList();
 
-                gameInstance = new GameInstance(gameInstanceDto, gamePurchasesDto);
+                gameData = ModelConverter.ToGameData(dbGameData, dbGamePurchases);
             }
         }
 
-        return gameInstance;
+        return gameData;
     }
 }
 

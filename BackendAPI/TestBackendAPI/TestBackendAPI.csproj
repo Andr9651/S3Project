@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ModelLibrary\ModelLibrary.csproj" />
     <ProjectReference Include="..\BackendAPI\BackendAPI.csproj" />
   </ItemGroup>
 

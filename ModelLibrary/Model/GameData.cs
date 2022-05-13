@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DesktopHostingClient.Model;
+namespace ModelLibrary.Model;
 public class GameData
 {
     public int Id { get; set; }
