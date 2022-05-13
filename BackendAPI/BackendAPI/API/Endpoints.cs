@@ -18,7 +18,7 @@ public class Endpoints
 
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
 
-            List<DBPurchasable> purchasables = gameDataService.GetPurchasables();
+            Dictionary<int, DBPurchasable> purchasables = gameDataService.GetPurchasables();
 
             IResult HTTPResult;
 

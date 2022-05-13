@@ -19,7 +19,7 @@ public class GameHub : Hub
     {
         GameManager.NotifyBalanceChanged();
 
-        List<Purchasable> purchasables = GameManager.Purchasables.Values.ToList<Purchasable>();
+        Dictionary<int, Purchasable> purchasables = GameManager.Purchasables;
 
         Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
 

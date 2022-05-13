@@ -8,16 +8,16 @@ public class GameManager
     public event Action PongEvent;
 
     private GameData _gameData;
-    private List<Purchasable> _purchasables;
+    private Dictionary<int, Purchasable> _purchasables;
 
     public event Action StateHasChangedEvent;
 
     public GameManager()
     {
         _gameData = new GameData();
-        _purchasables = new List<Purchasable>();
+        _purchasables = new Dictionary<int, Purchasable>();
     }
-    
+
     public async Task ConnectToGame(string ip)
     {
         if (_connection is not null)
@@ -32,10 +32,10 @@ public class GameManager
 
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
-        _connection.On<List<Purchasable>>("ReceivePurchasables", ReceivePurchasables);
+        _connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", ReceivePurchasables);
         _connection.On<Dictionary<int, int>>("ReceivePurchases", ReceivePurchases);
         _connection.On<int, int>("PurchaseUpdate", ReceivePurchaseUpdate);
-        
+
         await _connection.StartAsync();
     }
 
@@ -51,12 +51,12 @@ public class GameManager
         StateHasChangedEvent?.Invoke();
     }
 
-    private void ReceivePurchasables(List<Purchasable> purchasables)
+    private void ReceivePurchasables(Dictionary<int, Purchasable> purchasables)
     {
-        _purchasables = purchasables.ToList();
+        _purchasables = purchasables;
         StateHasChangedEvent?.Invoke();
     }
-    
+
     private void BalanceUpdate(int balance)
     {
         _gameData.Balance = balance;
@@ -87,11 +87,18 @@ public class GameManager
 
     public bool CanBuyPurchasable(int purchasableId)
     {
-        Purchasable purchasable = _purchasables.Find(p => p.Id == purchasableId);
+        bool canPurchase = false;
 
-        return purchasable.Price <= _gameData.Balance;
+        Purchasable purchasable = null;
+        if (_purchasables.ContainsKey(purchasableId))
+        {
+            purchasable = _purchasables[purchasableId];
+            canPurchase = purchasable.Price <= _gameData.Balance;
+        }
+
+        return canPurchase;
     }
-    
+
     public int GetBalance()
     {
         return _gameData.Balance;
@@ -99,7 +106,7 @@ public class GameManager
 
     public IReadOnlyCollection<Purchasable> GetPurchasables()
     {
-        return _purchasables;
+        return _purchasables.Values;
     }
 
     public int GetPurchaseAmount(int purchasableId)

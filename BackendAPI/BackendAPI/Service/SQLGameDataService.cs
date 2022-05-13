@@ -3,6 +3,7 @@ using ModelLibrary.Model;
 using System.Data.SqlClient;
 using Dapper;
 using System.Configuration;
+using System.Linq;
 
 namespace BackendAPI.Service;
 
@@ -15,15 +16,15 @@ public class SQLGameDataService
         _dbConnectionString = connectionString;
     }
 
-    public List<DBPurchasable> GetPurchasables()
+    public Dictionary<int, DBPurchasable> GetPurchasables()
     {
-        List<DBPurchasable>? dbPurchasables = null;
+        Dictionary<int,DBPurchasable> dbPurchasables = null;
 
         string sqlQuery = "select * from Purchasable";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToList();
+            dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToDictionary(p => p.Id);
         }
 
         return dbPurchasables;

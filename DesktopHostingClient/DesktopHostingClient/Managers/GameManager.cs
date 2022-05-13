@@ -121,7 +121,7 @@ public class GameManager
     public async Task SetupGame(int? loadedGameId = null)
     {
         PurchasableService purchasableService = new PurchasableService();
-        List<Purchasable> purchasables = await purchasableService.GetPurchasables();
+        Purchasables = await purchasableService.GetPurchasables();
         GameDataService gameDataService = new GameDataService();
 
         if (loadedGameId is null)
@@ -132,12 +132,6 @@ public class GameManager
         {
             GameData = await gameDataService.LoadGameData(loadedGameId.Value);
         }
-
-        Purchasables = purchasables.ToDictionary(
-            keySelector: purchasable => purchasable.Id,
-            elementSelector: purchasable => purchasable
-        );
-
 
         StartBalanceUpdateThread();
     }

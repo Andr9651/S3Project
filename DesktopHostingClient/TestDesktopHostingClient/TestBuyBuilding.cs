@@ -47,9 +47,9 @@ public class TestBuyBuilding
         PurchasableService purchasableService = new PurchasableService(_apiUrl);
 
         //Act 
-        Task<List<Purchasable>> task = purchasableService.GetPurchasables();
+        Task<Dictionary<int, Purchasable>> task = purchasableService.GetPurchasables();
         task.Wait();
-        List<Purchasable> foundPurchasable = task.Result;
+        Dictionary<int, Purchasable> foundPurchasable = task.Result;
 
         //Assert
         Assert.NotNull(foundPurchasable);
@@ -73,15 +73,10 @@ public class TestBuyBuilding
 
         PurchasableService purchasableService = new PurchasableService(_apiUrl);
 
-        Task<List<Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
+        Task<Dictionary<int, Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
         purchasablesTask.Wait();
 
-        List<Purchasable> purchasables = purchasablesTask.Result;
-
-        gameManager.Purchasables = purchasables.ToDictionary(
-            keySelector: purchasable => purchasable.Id,
-            elementSelector: purchasable => purchasable
-        );
+        gameManager.Purchasables = purchasablesTask.Result;
 
         //gameManager.SetupGame().Wait();
 
