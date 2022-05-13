@@ -87,9 +87,9 @@ public class TestBuyBuilding
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = hubConnectionBuilder.Build();
 
-        List<Purchasable> receivedPurchasables = null;
+        Dictionary<int, Purchasable> receivedPurchasables = null;
 
-        connection.On<List<Purchasable>>("ReceivePurchasables", (purchasables) =>
+        connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", (purchasables) =>
         {
             receivedPurchasables = purchasables;
         });

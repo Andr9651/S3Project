@@ -1,17 +1,7 @@
 ﻿using DesktopHostingClient.Managers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DesktopHostingClient.Windows;
 public partial class HostingWindow : Window
@@ -29,8 +19,6 @@ public partial class HostingWindow : Window
 
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        
-
         LabelIpAddress.Content = await HostingManager.GetPublicIp();
 
         HostingManager.SetupSignalRHost();
@@ -53,13 +41,37 @@ public partial class HostingWindow : Window
     private void Stop_Game_Click(object sender, RoutedEventArgs e)
     {
         MainWindow mainWindow = new MainWindow();
-        mainWindow.Show();  
+        mainWindow.Show();
 
         this.Close();
+    }
+
+    private async Task<bool> AskToSave()
+    {
+        bool savedSuccessfully = false;
+
+        MessageBoxResult messageBoxResult = MessageBox.Show("Do you want to save before closing?", "Save Game?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+
+        if (messageBoxResult == MessageBoxResult.Yes)
+        {
+           savedSuccessfully = await GameManager.SaveGame();
+        }
+
+        return savedSuccessfully;
     }
 
     private async void Save_Game_Click(object sender, RoutedEventArgs e)
     {
         bool result = await GameManager.SaveGame();
+
+        if (result)
+        {
+            MessageBox.Show($"Congratulations: The Game was successfully saved.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+        }
+        else
+        {
+            MessageBox.Show($"ERROR: The Game failed to save.{Environment.NewLine}{Environment.NewLine}Please try again.", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

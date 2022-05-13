@@ -213,9 +213,19 @@ public class GameManager
         return GameData.Id;
     }
 
-    public Task<bool> SaveGame()
+    public async Task<bool> SaveGame()
     {
-        GameDataService gameDataService = new GameDataService();
-        return gameDataService.SaveGameData(GameData);
+        bool isSuccess = false;
+        try
+        {
+            GameDataService gameDataService = new GameDataService();
+            isSuccess = await gameDataService.SaveGameData(GameData);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return isSuccess;
     }
 }
