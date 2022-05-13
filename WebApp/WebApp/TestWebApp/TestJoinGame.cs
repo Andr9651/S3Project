@@ -49,7 +49,10 @@ public class TestJoinGame
         gameManager.ConnectToGame("127.0.0.1:5100");
 
         bool receivedPong = false;
-        Action pongAction = () => { receivedPong = true; };
+        Action pongAction = () =>
+        {
+            receivedPong = true;
+        };
         gameManager.PongEvent += pongAction;
 
         gameManager.PingServer();

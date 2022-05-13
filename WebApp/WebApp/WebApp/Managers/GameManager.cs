@@ -6,11 +6,18 @@ public class GameManager
 {
     private HubConnection _connection;
     public event Action PongEvent;
-    public event Action<int> BalanceUpdateEvent;
-    public event Action<List<Purchasable>> ReceivePurchasablesEvent;
-    public event Action<Dictionary<int, int>> ReceivePurchasesEvent;
-    public event Action<int,int> ReceivePurchaseUpdateEvent;
 
+    private GameData _gameData;
+    private List<Purchasable> _purchasables;
+
+    public event Action StateHasChangedEvent;
+
+    public GameManager()
+    {
+        _gameData = new GameData();
+        _purchasables = new List<Purchasable>();
+    }
+    
     public async Task ConnectToGame(string ip)
     {
         if (_connection is not null)
@@ -34,22 +41,32 @@ public class GameManager
 
     private void ReceivePurchaseUpdate(int purchaseId, int amount)
     {
-        ReceivePurchaseUpdateEvent(purchaseId, amount);
+        _gameData.Purchases[purchaseId] = amount;
+        StateHasChangedEvent?.Invoke();
     }
 
     private void ReceivePurchases(Dictionary<int, int> purchases)
     {
-        ReceivePurchasesEvent(purchases);
+        _gameData.Purchases = purchases;
+        StateHasChangedEvent?.Invoke();
     }
 
-    public async Task<bool> TryBuyPurchasable(int purchasableId)
+    private void ReceivePurchasables(List<Purchasable> purchasables)
     {
-        return await _connection.InvokeAsync<bool>("TryBuyPurchasable", purchasableId);
+        _purchasables = purchasables.ToList();
+        StateHasChangedEvent?.Invoke();
     }
     
     private void BalanceUpdate(int balance)
     {
-        BalanceUpdateEvent(balance);
+        _gameData.Balance = balance;
+
+        StateHasChangedEvent?.Invoke();
+    }
+
+    private void Pong()
+    {
+        PongEvent.Invoke();
     }
 
     public async Task CloseConnection()
@@ -63,12 +80,37 @@ public class GameManager
         _connection.InvokeAsync("Ping");
     }
 
-    private void Pong()
+    public async Task<bool> TryBuyPurchasable(int purchasableId)
     {
-        PongEvent.Invoke();
+        return await _connection.InvokeAsync<bool>("TryBuyPurchasable", purchasableId);
     }
-    private void ReceivePurchasables(List<Purchasable> purchasables)
+
+    public bool CanBuyPurchasable(int purchasableId)
     {
-        ReceivePurchasablesEvent(purchasables);
+        Purchasable purchasable = _purchasables.Find(p => p.Id == purchasableId);
+
+        return purchasable.Price <= _gameData.Balance;
+    }
+    
+    public int GetBalance()
+    {
+        return _gameData.Balance;
+    }
+
+    public IReadOnlyCollection<Purchasable> GetPurchasables()
+    {
+        return _purchasables;
+    }
+
+    public int GetPurchaseAmount(int purchasableId)
+    {
+        int amount = 0;
+
+        if (_gameData.Purchases.ContainsKey(purchasableId))
+        {
+            amount = _gameData.Purchases[purchasableId];
+        }
+
+        return amount;
     }
 }
