@@ -1,37 +1,49 @@
 ﻿@page "/Game"
 @page "/Game/{ip}"
+@using System.Diagnostics
 @using WebApp.Managers
 @using ModelLibrary.Model;
 @inject IJSRuntime JsRunTime
 
 <h3>Game</h3>
 
-<p role="status">Ip: @Ip</p>
+<p>Ip: @Ip</p>
+<p>PingTime: @pingTime ms</p>
 
-<p role="status">Balance: @gameManager.GetBalance()</p>
+<p>Balance: @gameManager.GetBalance()</p>
 
 <button class="btn btn-primary" @onclick="@Ping">Ping</button>
 
 @foreach (Purchasable p in gameManager.GetPurchasables())
 {
+    <br />
     <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
         @p.Name @p.Price Count:@gameManager.GetPurchaseAmount(p.Id)
     </button>
 }
+
+<br />
+
 <input type="checkbox" value="@_doDelay" @bind="@_doDelay">
 <label>Delay</label>
+<input type="number" @bind-value="@_delayLength"/>
 
 @code
 {
     [Parameter]
     public string Ip { get; set; }
+
+    private long pingTime = 0;
+    private Stopwatch pingTimer;
+
     private bool _doDelay;
+    private int _delayLength = 5000;
     private GameManager gameManager = new GameManager();
 
     private void Ping()
     {
         gameManager.PingServer();
-        Ip = "ping";
+        pingTimer.Start();
     }
 
     private async void TryBuyPurchasable(int purchasableId)
@@ -40,7 +52,7 @@
         {
             if (_doDelay)
             {
-                await Task.Delay(5000);
+                await Task.Delay(_delayLength);
             }
 
             bool success = await gameManager.TryBuyPurchasable(purchasableId);
@@ -58,6 +70,7 @@
 
     protected async override void OnInitialized()
     {
+        pingTimer = new Stopwatch();
         base.OnInitialized();
 
         gameManager.StateHasChangedEvent += () =>
@@ -67,7 +80,9 @@
 
         gameManager.PongEvent += () =>
         {
-            Ip = "Pong";
+            pingTimer.Stop();
+            pingTime = pingTimer.ElapsedMilliseconds;
+            pingTimer.Reset();
             InvokeAsync(StateHasChanged);
         };
 
