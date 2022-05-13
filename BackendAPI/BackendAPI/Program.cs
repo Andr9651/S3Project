@@ -1,8 +1,4 @@
 using BackendAPI.API;
-using BackendAPI.Model;
-using Dapper;
-using System.Data.SqlClient;
-
 
 var builder = WebApplication.CreateBuilder(args);
 

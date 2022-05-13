@@ -1,8 +1,8 @@
 using Xunit;
 using System.Data.SqlClient;
 using Dapper;
-using BackendAPI.Model;
-using BackendAPI.Model.DTO;
+using ModelLibrary.Model;
+using BackendAPI.DBModel;
 using BackendAPI.Service;
 using Microsoft.Extensions.Configuration;
 
@@ -40,14 +40,14 @@ public class TestDapper
 
     [Fact]
     [Trait("UserStory", "SQL Database")]
-    public void TestPurchasableDto()
+    public void TestDBPurchasable()
     {
         //arrange
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
             //act
             //start with test insert
-            PurchasableDto purchasable = new PurchasableDto
+            DBPurchasable purchasable = new DBPurchasable
             {
                 Name = "TestItem",
                 Price = 69420
@@ -68,27 +68,27 @@ public class TestDapper
     }
     [Fact]
     [Trait("UserStory", "SQL Database")]
-    public void TestGameInstanceDto()
+    public void TestDBGameData()
     {
         //arrange
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
             //act
             //start with test insert
-            GameInstanceDto gameInstanceDto = new GameInstanceDto
+            DBGameData dbGameData = new DBGameData
             {
                 Balance = 1,
                 HostIp = "Jeg er ikke en ip"
             };
-            string sqlInsert = "insert into GameInstance(balance, hostIp) values (@Balance, @HostIp)";
-            int rowsInserted = connection.Execute(sqlInsert, gameInstanceDto);
+            string sqlInsert = "insert into GameData(balance, hostIp) values (@Balance, @HostIp)";
+            int rowsInserted = connection.Execute(sqlInsert, dbGameData);
             //assert
             Assert.Equal(1, rowsInserted);
             if (rowsInserted >= 1)
             {
                 //testDelete
-                string sqlDelete = "delete from GameInstance where hostIp = @HostIp";
-                int rowsDeleted = connection.Execute(sqlDelete, gameInstanceDto);
+                string sqlDelete = "delete from GameData where hostIp = @HostIp";
+                int rowsDeleted = connection.Execute(sqlDelete, dbGameData);
                 Assert.True(rowsDeleted > 0);
             }
         }
@@ -96,29 +96,29 @@ public class TestDapper
 
     [Fact]
     [Trait("UserStory", "Create New Game Instance")]
-    public void TestCreateGameInstance()
+    public void TestCreateGameData()
     {
         //Arrange 
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
         //Act 
-        GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+        GameData gameData = sqlGameDataService.CreateGameData();
         //Assert
-        Assert.NotNull(gameInstance);
-        Assert.NotEqual(0, gameInstance.Id);
+        Assert.NotNull(gameData);
+        Assert.NotEqual(0, gameData.Id);
     }
 
     [Fact]
     [Trait("UserStory", "Save Game")]
-    public void TestSaveGameInstance()
+    public void TestSaveGameData()
     {
         //Arrange 
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
 
         //Act 
-        GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
-        gameInstance.HostIp = "Jeg er ikke en ip";
+        GameData gameData = sqlGameDataService.CreateGameData();
+        gameData.Ip = "Jeg er ikke en ip";
 
-        bool result = sqlGameDataService.SaveGameInstance(gameInstance);
+        bool result = sqlGameDataService.SaveGameData(gameData);
 
         //Assert
         Assert.True(result);
@@ -126,16 +126,16 @@ public class TestDapper
 
     [Fact]
     [Trait("UserStory", "Save Game")]
-    public void TestSaveGameInstanceWithPurchases()
+    public void TestSaveGameDataWithPurchases()
     {
         //Arrange 
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
         //Act 
-        GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
-        gameInstance.Purchases.Add(1, 5);
-        gameInstance.Purchases.Add(2, 5);
+        GameData gameData = sqlGameDataService.CreateGameData();
+        gameData.Purchases.Add(1, 5);
+        gameData.Purchases.Add(2, 5);
 
-        bool result = sqlGameDataService.SaveGameInstance(gameInstance);
+        bool result = sqlGameDataService.SaveGameData(gameData);
         //Assert
 
         Assert.True(result);
@@ -143,55 +143,55 @@ public class TestDapper
 
     [Fact]
     [Trait("UserStory", "Load Game Instance")]
-    public void TestLoadData()
+    public void TestLoadGameData()
     {
         //Arrange
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
 
-        GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
-        gameInstance.Purchases.Add(1, 5);
-        gameInstance.Purchases.Add(2, 5);
+        GameData gameData = sqlGameDataService.CreateGameData();
+        gameData.Purchases.Add(1, 5);
+        gameData.Purchases.Add(2, 5);
 
-        sqlGameDataService.SaveGameInstance(gameInstance);
+        sqlGameDataService.SaveGameData(gameData);
 
         //Act
-        GameInstance loadedGameInstance = sqlGameDataService.GetGameInstance(gameInstance.Id);
+        GameData loadedGameData = sqlGameDataService.GetGameData(gameData.Id);
 
         //Assert
-        Assert.NotNull(loadedGameInstance);
-        Assert.Equal(2, loadedGameInstance.Purchases.Count);
-        Assert.Equal(5, loadedGameInstance.Purchases[1]);
-        Assert.Equal(5, loadedGameInstance.Purchases[2]);
+        Assert.NotNull(loadedGameData);
+        Assert.Equal(2, loadedGameData.Purchases.Count);
+        Assert.Equal(5, loadedGameData.Purchases[1]);
+        Assert.Equal(5, loadedGameData.Purchases[2]);
     }
 
     [Fact]
     [Trait("UserStory", "Load Game Instance")]
-    public void TestLoadDataWithoutPurchases()
+    public void TestLoadGameDataWithoutPurchases()
     {
         //Arrange
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
 
-        GameInstance gameInstance = sqlGameDataService.CreateGameInstance();
+        GameData gameData = sqlGameDataService.CreateGameData();
 
-        sqlGameDataService.SaveGameInstance(gameInstance);
+        sqlGameDataService.SaveGameData(gameData);
 
         //Act
-        GameInstance loadedGameInstance = sqlGameDataService.GetGameInstance(gameInstance.Id);
+        GameData loadedGameData = sqlGameDataService.GetGameData(gameData.Id);
 
         //Assert
-        Assert.NotNull(loadedGameInstance);
-        Assert.Equal(0, loadedGameInstance.Purchases.Count);
+        Assert.NotNull(loadedGameData);
+        Assert.Equal(0, loadedGameData.Purchases.Count);
     }
 
     [Fact]
     [Trait("UserStory", "Load Game Instance")]
-    public void TestLoadGameInstanceBadId()
+    public void TestLoadGameDataBadId()
     {
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
 
-        GameInstance gameInstance = sqlGameDataService.GetGameInstance(-1);
+        GameData gameData = sqlGameDataService.GetGameData(-1);
 
         //Assert 
-        Assert.Null(gameInstance);
+        Assert.Null(gameData);
     }
 }
