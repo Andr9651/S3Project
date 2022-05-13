@@ -22,13 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ModelLibrary\ModelLibrary.csproj" />
     <ProjectReference Include="..\DesktopHostingClient\DesktopHostingClient.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="ModelLibrary">
-      <HintPath>..\..\ModelLibrary\bin\Debug\net6.0\ModelLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
