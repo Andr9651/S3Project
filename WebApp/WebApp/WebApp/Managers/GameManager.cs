@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using static WebApp.Model.Purchasables;
+using ModelLibrary.Model;
 
 namespace WebApp.Managers;
 public class GameManager
