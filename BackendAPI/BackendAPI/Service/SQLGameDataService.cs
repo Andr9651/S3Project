@@ -16,6 +16,8 @@ public class SQLGameDataService
         _dbConnectionString = connectionString;
     }
 
+
+    /// <returns> A Dictionary mapping a Purchaseable.Id to Purchaseable</returns>
     public Dictionary<int, DBPurchasable> GetPurchasables()
     {
         Dictionary<int,DBPurchasable> dbPurchasables = null;

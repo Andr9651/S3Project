@@ -1,15 +1,12 @@
 ﻿using ModelLibrary.Model;
-using Dapper;
 using BackendAPI.DBModel;
 using BackendAPI.Service;
-using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendAPI.API;
 
 public class Endpoints
 {
-
     public static void SetupEndpoints(WebApplication webApplication)
     {
         webApplication.MapGet("/Purchasable", () =>
@@ -99,4 +96,13 @@ public class Endpoints
             return HTTPResult;
         });
     }
+
+    // This is how it would have looked as an extension method 
+    // calling it would look like this:
+    // app.SetupEndpoints();
+
+    // public static void SetupEndpoints(this WebApplication webApplication)
+    // {
+    //     ... 
+    // }
 }

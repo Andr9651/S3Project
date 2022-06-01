@@ -1,18 +1,11 @@
 using BackendAPI.API;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+WebApplication app = builder.Build();
 
-
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-
+// Redirects HTTP requests to HTTPS instead
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
 
 Endpoints.SetupEndpoints(app);
 
