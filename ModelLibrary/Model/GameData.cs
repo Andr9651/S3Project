@@ -10,13 +10,7 @@ public class GameData
     public int Id { get; set; }
     public string Ip { get; set; }
     public Dictionary<int, int> Purchases { get; set; }
-    public int Balance
-    {
-        get { return _balance; }
-        set { _balance = value; }
-    }
-
-    private int _balance;
+    public int Balance { get; set; }
 
     public GameData()
     {

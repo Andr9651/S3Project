@@ -42,7 +42,9 @@ public partial class MainWindow : Window
     private void Load_Game_Click(object sender, RoutedEventArgs e)
     {
         string loadGameIdText = LoadGameTextBox.Text;
-        
+
+        // "out" passes the parameter as a reference into the function
+        // and allows variable to keep changes made inside the function
         if (int.TryParse(loadGameIdText, out int loadGameId))
         {
             HostingWindow hostingWindow = new HostingWindow(loadGameId);

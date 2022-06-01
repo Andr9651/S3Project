@@ -1,4 +1,6 @@
 ﻿namespace BackendAPI.DBModel;
+
+// Matches the GamePurchase table in the database.
 public class DBGamePurchase
 {
     public int GameDataId { get; set; }

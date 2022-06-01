@@ -80,6 +80,8 @@ public class Endpoints
             return HTTPResult;
         });
 
+        // The [FromBody] attribute, specifies that the gamedata parameter should
+        // get its value from the HTTP Request Body.
         webApplication.MapPut("/GameData", ([FromBody] GameData gameData) =>
         {
             string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
@@ -103,11 +105,12 @@ public class Endpoints
         });
     }
 
-    // This is how it would have looked as an extension method 
-    // calling it would look like this:
-    // app.SetupEndpoints();
+    // This is how it would have looked as an extension method.
     // public static void SetupEndpoints(this WebApplication webApplication)
     // {
     //     ... 
     // }
+
+    // Calling it would look like this:
+    // app.SetupEndpoints();
 }

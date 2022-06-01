@@ -40,6 +40,8 @@ public class ModelConverter
     {
         List<DBGamePurchase> dbGamePurchases = new List<DBGamePurchase>();
 
+        // gameData.Purchases is a dictionary and contains
+        // KeyValuePairs<Purchasable.id, amount>
         foreach (KeyValuePair<int, int> purchasableIdAmount in gameData.Purchases)
         {
             DBGamePurchase dbGamePurchase = new DBGamePurchase()

@@ -20,7 +20,7 @@ public class SQLGameDataService
     /// <returns> A Dictionary mapping a Purchaseable.Id to Purchaseable</returns>
     public Dictionary<int, DBPurchasable> GetPurchasables()
     {
-        Dictionary<int,DBPurchasable> dbPurchasables = null;
+        Dictionary<int, DBPurchasable> dbPurchasables = null;
 
         string sqlQuery = "select * from Purchasable";
 
@@ -52,6 +52,7 @@ public class SQLGameDataService
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
+            // connection.Open() is needed to start a transaction.
             connection.Open();
             using (SqlTransaction SqlTransaction = connection.BeginTransaction())
             {
@@ -59,7 +60,7 @@ public class SQLGameDataService
 
                 int linesChangedGameData = connection.Execute(
                     sqlQueryUpdateGameData,
-                    dbGameData,
+                    dbGameData, // acts as parameters.
                     SqlTransaction
                 );
 
@@ -72,9 +73,8 @@ public class SQLGameDataService
                 {
                     int linesChangedGamePurchases = connection.Execute(
                         sqlQueryUpdateGamePurchases,
-                        dbGamePurchases,
+                        dbGamePurchases, // acts as parameters.
                         SqlTransaction
-
                     );
 
                     if (linesChangedGamePurchases == 0)
@@ -123,19 +123,25 @@ public class SQLGameDataService
         string sqlQueryGetDBGameData = "select * from GameData " +
             "where id = @id ";
         string sqlQueryGetDBGamePurchases = "select * from GamePurchase " +
-            "where GameDataId = @id"; 
+            "where GameDataId = @id";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
             DBGameData dbGameData = null;
-            List<DBGamePurchase> dbGamePurchases = null;
-
-            
-            dbGameData = connection.QuerySingleOrDefault<DBGameData>(sqlQueryGetDBGameData, new {id = id});
+            // The id in the anonymous object needs to match the @id in the query
+            var parameters = new { id = id };
+            dbGameData = connection.QuerySingleOrDefault<DBGameData>(
+                sqlQueryGetDBGameData,
+                parameters
+            );
 
             if (dbGameData is not null)
             {
-                dbGamePurchases = connection.Query<DBGamePurchase>(sqlQueryGetDBGamePurchases, new { id = id }).ToList();
+                List<DBGamePurchase> dbGamePurchases = null;
+                dbGamePurchases = connection.Query<DBGamePurchase>(
+                    sqlQueryGetDBGamePurchases,
+                    parameters
+                ).ToList();
 
                 gameData = ModelConverter.ToGameData(dbGameData, dbGamePurchases);
             }
