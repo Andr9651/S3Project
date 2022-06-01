@@ -9,25 +9,31 @@ public class Endpoints
 {
     public static void SetupEndpoints(WebApplication webApplication)
     {
+        // Return JSON object with all available Purchaseables with the
+        // purchasable's Id as keys.
         webApplication.MapGet("/Purchasable", () =>
         {
+            // First get the purchasables from the database.
             string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
-
             SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
-
             Dictionary<int, DBPurchasable> purchasables = gameDataService.GetPurchasables();
 
+            // Construct the HTTP result with proper status code.
+            // If there is no need for status codes AspNetCore will convert
+            // a returned value to HTTPResult with status code 200 on it's own.
             IResult HTTPResult;
-
             if (purchasables is null)
             {
+                // 500 = server error
                 HTTPResult = Results.StatusCode(500);
             }
             else
             {
+                // Status code for OK = 200
+                // This method automatically converts the dictionary to a JSON object.
                 HTTPResult = Results.Ok(purchasables);
             }
-
+            
             return HTTPResult;
         });
 
@@ -100,7 +106,6 @@ public class Endpoints
     // This is how it would have looked as an extension method 
     // calling it would look like this:
     // app.SetupEndpoints();
-
     // public static void SetupEndpoints(this WebApplication webApplication)
     // {
     //     ... 

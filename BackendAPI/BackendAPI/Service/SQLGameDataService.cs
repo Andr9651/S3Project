@@ -130,6 +130,7 @@ public class SQLGameDataService
             DBGameData dbGameData = null;
             List<DBGamePurchase> dbGamePurchases = null;
 
+            
             dbGameData = connection.QuerySingleOrDefault<DBGameData>(sqlQueryGetDBGameData, new {id = id});
 
             if (dbGameData is not null)
