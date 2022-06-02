@@ -53,7 +53,12 @@ public partial class MainWindow : Window
             this.Close();
         } else
         {
-            MessageBox.Show($"{loadGameIdText} is not a valid id", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                $"{loadGameIdText} is not a valid id",
+                "Alert",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
     }
 }

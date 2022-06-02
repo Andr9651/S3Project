@@ -15,17 +15,20 @@ public class GameHub : Hub
         GameManager = GameManager.GetInstance();
     }
 
+    // Gets executed when a client connects to the hub.
     public override async Task OnConnectedAsync()
     {
-        GameManager.NotifyBalanceChanged();
+        // NotifyBalanceChanged updates all clients, which is not needed.
+        // GameManager.NotifyBalanceChanged();
+
+        // Clients.Caller only updates the caller.
+        await Clients.Caller.SendAsync("BalanceUpdate", GameManager.GetBalance());
 
         Dictionary<int, Purchasable> purchasables = GameManager.Purchasables;
+        await Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
 
-        Clients.Caller.SendAsync("ReceivePurchasables", purchasables);
-
-        Dictionary<int, int> readOnlyPurchases = (Dictionary<int, int>)GameManager.GetPurchases();
-
-        Clients.Caller.SendAsync("ReceivePurchases", readOnlyPurchases);
+        Dictionary<int, int> purchases = GameManager.GetPurchases();
+        await Clients.Caller.SendAsync("ReceivePurchases", purchases);
     }
 
     public bool HasGame()

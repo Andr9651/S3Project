@@ -6,36 +6,39 @@ using System.Windows;
 namespace DesktopHostingClient.Windows;
 public partial class HostingWindow : Window
 {
-    public HostingManager HostingManager { get; set; }
-    public GameManager GameManager { get; set; }
+    private HostingManager HostingManager { get; set; }
+    private GameManager GameManager { get; set; }
     private int? _loadGameId { get; set; }
     public HostingWindow(int? loadGameId = null)
     {
         InitializeComponent();
+
+        _loadGameId = loadGameId;
+
         GameManager = GameManager.GetInstance();
         HostingManager = new HostingManager();
-        _loadGameId = loadGameId;
     }
 
+    // Gets called when the window opens
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        LabelIpAddress.Content = await HostingManager.GetPublicIp();
-
+        // Start Game and Hosting
         HostingManager.SetupSignalRHost();
-
         await HostingManager.StartHosting();
-
         await GameManager.SetupGame(_loadGameId);
 
+        // Set content of labels
+        LabelIpAddress.Content = await HostingManager.GetPublicIp();
         GameId.Content = GameManager.GetGameId();
-
         LabelPort.Content = HostingManager.Port;
     }
 
-    private void OnClose(object sender, EventArgs e)
+    // Gets called when the window closes
+    private async void OnClose(object sender, EventArgs e)
     {
         GameManager.ShutdownGame();
         HostingManager.DisposeHost();
+        await AskToSave();
     }
 
     private void Stop_Game_Click(object sender, RoutedEventArgs e)
@@ -50,7 +53,12 @@ public partial class HostingWindow : Window
     {
         bool savedSuccessfully = false;
 
-        MessageBoxResult messageBoxResult = MessageBox.Show("Do you want to save before closing?", "Save Game?", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+        MessageBoxResult messageBoxResult = MessageBox.Show(
+            "Do you want to save before closing?",
+            "Save Game?",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Exclamation
+        );
 
         if (messageBoxResult == MessageBoxResult.Yes)
         {
@@ -66,12 +74,21 @@ public partial class HostingWindow : Window
 
         if (result)
         {
-            MessageBox.Show($"Congratulations: The Game was successfully saved.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
+            MessageBox.Show(
+                $"Congratulations: The Game was successfully saved.",
+                "Success",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
         else
         {
-            MessageBox.Show($"ERROR: The Game failed to save.{Environment.NewLine}{Environment.NewLine}Please try again.", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(
+                $"ERROR: The Game failed to save.{Environment.NewLine}{Environment.NewLine}Please try again.",
+                "ERROR!",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
         }
     }
 }

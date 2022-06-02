@@ -1,34 +1,28 @@
 ﻿using DesktopHostingClient.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Configuration;
+
 
 namespace DesktopHostingClient.Managers;
 public class HostingManager
 {
-    public string Port
-    {
-        get { return _port; }
-        set { _port = value; }
-    }
-
+    public string Port { get; set; }
     private IHost _host;
-    private string _port;
-    private IHubContext<GameHub> _hubContext;
+    // Represents the connections in the SignalR GameHub
+    private IHubContext<GameHub>? _gameHubConnections;
 
     public HostingManager()
     {
-        _port = "5100";
+        Port = ConfigurationManager.ConnectionStrings["HostPort"].ToString() ;
 
+        // Subscribe actions to GameManager events
         GameManager gameManager = GameManager.GetInstance();
         gameManager.OnBalanceChanged += PushBalanceToClients;
         gameManager.OnPurchase += PushPurchaseToClients;
@@ -36,12 +30,14 @@ public class HostingManager
 
     private void PushPurchaseToClients(int purchaseId, int amount)
     {
-        _hubContext?.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
+        // Sends a PurchaseUpdate to all clients
+        _gameHubConnections?.Clients.All.SendAsync("PurchaseUpdate", purchaseId, amount);
     }
 
     private void PushBalanceToClients(int balance)
     {
-        _hubContext?.Clients.All.SendAsync("BalanceUpdate", balance);
+        // Sends a BalanceUpdate to all clients
+        _gameHubConnections?.Clients.All.SendAsync("BalanceUpdate", balance);
     }
 
     public void SetupSignalRHost()
@@ -50,33 +46,44 @@ public class HostingManager
 
         IHostBuilder hostBuilder = Host.CreateDefaultBuilder();
 
-        Action<IServiceCollection> serviceCollection = services =>
+        // Configures the ServiceCollection
+        Action<IServiceCollection> serviceConfiguration = (services) =>
         {
+            // adds SignalR services to the ServiceCollection including "IHubContext<GameHub>"
             services.AddSignalR();
-            services.AddCors(services =>
+
+            // Add a Cross-Origin Resource Sharing (Cors) policy that allows anything.
+            services.AddCors((services) =>
             {
-                services.AddPolicy("test", (policy) =>
+                services.AddPolicy("AllowAny", (policy) =>
                 {
                     policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
                 });
             });
         };
 
-        Action<IApplicationBuilder> applicationBuilder = app =>
+        // Configures the applicationBuilder.
+        Action<IApplicationBuilder> applicationConfiguration = (app) =>
         {
-            app.UseCors("test");
+            // Use the created policy.
+            app.UseCors("AllowAny");
+
+            // Adds middleware that routes requests to endpoints.
             app.UseRouting();
-            app.UseEndpoints(endpoints => endpoints.MapHub<GameHub>("/GameHub"));
-        };
 
-        Action<IWebHostBuilder> webHostBuilder = webBuilder =>
+            // Creates an endpoint to access the SignalR hub "Gamehub".
+            app.UseEndpoints((endpoints) => endpoints.MapHub<GameHub>("/GameHub"));
+        };
+        
+        // Configures The WebHostBuilder with the previous configurations.
+        Action<IWebHostBuilder> webHostConfiguration = (webBuilder) =>
         {
-            webBuilder.UseUrls($"http://localhost:{_port}");
-            webBuilder.ConfigureServices(serviceCollection);
-            webBuilder.Configure(applicationBuilder);
+            webBuilder.UseUrls($"http://localhost:{Port}");
+            webBuilder.ConfigureServices(serviceConfiguration);
+            webBuilder.Configure(applicationConfiguration);
         };
 
-        hostBuilder.ConfigureWebHostDefaults(webHostBuilder);
+        hostBuilder.ConfigureWebHostDefaults(webHostConfiguration);
 
         _host = hostBuilder.Build();
     }
@@ -85,9 +92,8 @@ public class HostingManager
     {
         await _host.StartAsync();
 
-        GameManager gameDataManager =  GameManager.GetInstance();
-
-        _hubContext = (IHubContext<GameHub>)_host.Services.GetService(typeof(IHubContext<GameHub>));
+        // Gets the GameHubContext from the hosts service collection.
+        _gameHubConnections = _host.Services.GetService<IHubContext<GameHub>>();
     }
 
     public void DisposeHost()
@@ -96,6 +102,8 @@ public class HostingManager
         _host?.Dispose();
     }
 
+    // The public ip can't be seen from inside the computer, only from the outside.
+    // We send an API call to ipify, who then responds with our public ip.
     public async Task<string> GetPublicIp()
     {
         HttpClient client = new HttpClient();

@@ -18,50 +18,32 @@ namespace DesktopHostingClient.Managers;
 /// </summary>
 public class GameManager
 {
-    /// <value>
-    /// True if a GameData instance is present
-    /// </value>
+    /// <value> True if a GameData instance is present </value>
     public bool HasGameData
     {
         get { return (GameData is not null); }
     }
 
-    /// <summary>
-    /// Dictionary of available purchasable objects
-    /// <br/>
-    /// Key: Purchasable.Id
-    /// <br/>
-    /// Value: Purchasable
-    /// </summary>
+    // Volatile was not needed since the field is only modified by the main thread.
+    public bool IsUpdateThreadRunning { get; private set; }
+
+    /// <summary> Key: Purchasable.Id <br/> Value: Purchasable </summary>
     public Dictionary<int, Purchasable> Purchasables { get; set; }
 
-    public bool IsUpdateThreadRunning
-    {
-        get { return _isRunning; }
-        private set { _isRunning = value; }
-    }
-
-    /// <summary>
-    /// This event is triggered when the GameDataBalance is updated
-    /// <br/>
-    /// Returns the updated balance when invoked
-    /// </summary>
+    /// <summary> Sends balance as parameter </summary>
     public event Action<int> OnBalanceChanged;
+
+    /// <summary> Sends Purchasable.Id and bought amount as parameters </summary>
     public event Action<int, int> OnPurchase;
-    private GameData? GameData { get; set; }
-    private static GameManager _instance;
+    private GameData GameData { get; set; }
     private Thread incrementBalanceThread;
-    private volatile bool _isRunning;
+    private static GameManager _instance;
 
     private GameManager()
     {
         Purchasables = new Dictionary<int, Purchasable>();
-
     }
 
-    /// <summary>
-    /// Creates a GameManager if it has not been instatiated
-    /// </summary>
     /// <returns> The only GameManager instance</returns>
     public static GameManager GetInstance()
     {
@@ -86,7 +68,11 @@ public class GameManager
         {
             while (IsUpdateThreadRunning)
             {
-                SetBalance(GetBalance() + 1);
+                lock (GameData)
+                {
+                    SetBalance(GetBalance() + 1);
+                }
+
                 NotifyBalanceChanged();
                 Thread.Sleep(1000);
             }
@@ -98,6 +84,8 @@ public class GameManager
     public void StopBalanceUpdateThread()
     {
         IsUpdateThreadRunning = false;
+
+        // Waits for the increment balance thread to finish
         incrementBalanceThread?.Join();
     }
 
@@ -121,8 +109,9 @@ public class GameManager
     public async Task SetupGame(int? loadedGameId = null)
     {
         PurchasableService purchasableService = new PurchasableService();
-        Purchasables = await purchasableService.GetPurchasables();
         GameDataService gameDataService = new GameDataService();
+
+        Purchasables = await purchasableService.GetPurchasables();
 
         if (loadedGameId is null)
         {
@@ -159,7 +148,7 @@ public class GameManager
     {
         bool isSuccess = false;
 
-        //This fixes Race condition
+        //Locks gamedata from being used outside this scope
         lock (GameData)
         {
             if (Purchasables.ContainsKey(purchasableId))
@@ -177,10 +166,9 @@ public class GameManager
         }
 
         return isSuccess;
-
     }
 
-    public IReadOnlyDictionary<int, int> GetPurchases()
+    public Dictionary<int, int> GetPurchases()
     {
         return GameData.Purchases;
     }
@@ -221,7 +209,7 @@ public class GameManager
             GameDataService gameDataService = new GameDataService();
             isSuccess = await gameDataService.SaveGameData(GameData);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }
