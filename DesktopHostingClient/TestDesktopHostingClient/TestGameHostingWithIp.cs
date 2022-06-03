@@ -15,13 +15,14 @@ namespace TestDesktopHostingClient;
 public class TestGameHostingWithIp : IDisposable
 {
     private HostingManager _hostingManager;
+    private string _hostPort = "5100";
     public TestGameHostingWithIp()
     {
         for (int i = 0; i < 10; i++)
         {
             try
             {
-                _hostingManager = new HostingManager();
+                _hostingManager = new HostingManager(_hostPort);
                 _hostingManager.SetupSignalRHost();
                 _hostingManager.StartHosting().Wait();
 

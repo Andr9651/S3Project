@@ -12,9 +12,11 @@ namespace TestDesktopHostingClient;
 [Collection("Sequential")]
 public class TestSeeBalance
 {
+    private string _hostPort = "5100";
+
     private HostingManager TryStartHost()
     {
-        HostingManager hostingManager = new HostingManager();
+        HostingManager hostingManager = new HostingManager(_hostPort);
 
         for (int i = 0; i < 10; i++)
         {

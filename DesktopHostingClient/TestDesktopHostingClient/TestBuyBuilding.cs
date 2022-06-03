@@ -16,10 +16,11 @@ namespace TestDesktopHostingClient;
 public class TestBuyBuilding
 {
     private string _apiUrl = "https://localhost:7236";
+    private string _hostPort = "5100";
 
     private HostingManager TryStartHost()
     {
-        HostingManager hostingManager = new HostingManager();
+        HostingManager hostingManager = new HostingManager(_hostPort);
 
         for (int i = 0; i < 10; i++)
         {

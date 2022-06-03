@@ -12,12 +12,14 @@ namespace TestDesktopHostingClient;
 [Collection("Sequential")]
 public class TestHostingScreen
 {
+    private string _hostPort = "5100";
+
     [Fact]
     [Trait("UserStory", "Hosting Screen")]
     public async void TestGetHostIp ()
     {
         //Arrange
-        HostingManager hostingManager = new HostingManager();
+        HostingManager hostingManager = new HostingManager(_hostPort);
         //Act 
         string hostIp = await hostingManager.GetPublicIp();
         //Assert

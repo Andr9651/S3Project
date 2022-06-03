@@ -18,9 +18,16 @@ public class HostingManager
     // Represents the connections in the SignalR GameHub
     private IHubContext<GameHub>? _gameHubConnections;
 
-    public HostingManager()
+    public HostingManager(string? port = null)
     {
+        if(port is null)
+        {
         Port = ConfigurationManager.ConnectionStrings["HostPort"].ToString() ;
+        }
+        else
+        {
+            Port = port;
+        }
 
         // Subscribe actions to GameManager events
         GameManager gameManager = GameManager.GetInstance();
