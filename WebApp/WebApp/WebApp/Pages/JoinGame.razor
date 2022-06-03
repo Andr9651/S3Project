@@ -1,7 +1,4 @@
-﻿@page "/JoinGame"
-@using System.Text.RegularExpressions
-@using WebApp.Managers
-@inject NavigationManager navManager
+﻿@page "/JoinGame";
 
 <h3>
     JoinGame
@@ -21,30 +18,4 @@
     <p>
         @error
     </p>
-
-}
-
-@code {
-
-    private string ip;
-    private string error;
-
-    public void ButtonJoinGame()
-    {
-        if (JoinGameManager.ValidateIP(ip))
-        {
-            string gameURI = JoinGameManager.CreateJoinGameURI(ip);
-
-            navManager.NavigateTo(gameURI);
-        }
-        else
-        {
-            error = " Incorrect IP";
-        }
-    }
-
-    public void ButtonJoinLocalGame()
-    {
-        navManager.NavigateTo("/game/localhost:5100");
-    }
 }

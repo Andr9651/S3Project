@@ -1,9 +1,7 @@
-﻿@page "/Game"
-@page "/Game/{ip}"
-@using System.Diagnostics
-@using WebApp.Managers
+﻿@page "/Game";
+@page "/Game/{ip}";
 @using ModelLibrary.Model;
-@inject IJSRuntime JsRunTime
+
 
 <h3>Game</h3>
 
@@ -18,74 +16,12 @@
 {
     <br />
     <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
-        @p.Name @p.Price Count:@gameManager.GetPurchaseAmount(p.Id)
+        @p.Name @p.Price $ Count:@gameManager.GetPurchaseAmount(p.Id)
     </button>
 }
 
 <br />
 
-<input type="checkbox" value="@_doDelay" @bind="@_doDelay">
-<label>Delay</label>
+<input type="checkbox" @bind-value="@_doDelay"/>
+<label>Delay Length</label>
 <input type="number" @bind-value="@_delayLength"/>
-
-@code
-{
-    [Parameter]
-    public string Ip { get; set; }
-
-    private long pingTime = 0;
-    private Stopwatch pingTimer;
-
-    private bool _doDelay;
-    private int _delayLength = 5000;
-    private GameManager gameManager = new GameManager();
-
-    private void Ping()
-    {
-        gameManager.PingServer();
-        pingTimer.Start();
-    }
-
-    private async void TryBuyPurchasable(int purchasableId)
-    {
-        if (gameManager.CanBuyPurchasable(purchasableId))
-        {
-            if (_doDelay)
-            {
-                await Task.Delay(_delayLength);
-            }
-
-            bool success = await gameManager.TryBuyPurchasable(purchasableId);
-
-            if (!success)
-            {
-                await JsRunTime.InvokeVoidAsync("alert", "Somebody bought something before you!");
-            }
-        }
-        else
-        {
-            await JsRunTime.InvokeVoidAsync("alert", "Insufficient funds!");
-        }
-    }
-
-    protected async override void OnInitialized()
-    {
-        pingTimer = new Stopwatch();
-        base.OnInitialized();
-
-        gameManager.StateHasChangedEvent += () =>
-        {
-            InvokeAsync(StateHasChanged);
-        };
-
-        gameManager.PongEvent += () =>
-        {
-            pingTimer.Stop();
-            pingTime = pingTimer.ElapsedMilliseconds;
-            pingTimer.Reset();
-            InvokeAsync(StateHasChanged);
-        };
-
-        await gameManager.ConnectToGame(Ip);
-    }
-}

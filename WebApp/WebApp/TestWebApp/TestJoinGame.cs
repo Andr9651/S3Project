@@ -53,7 +53,7 @@ public class TestJoinGame
         {
             receivedPong = true;
         };
-        gameManager.PongEvent += pongAction;
+        gameManager.OnPong += pongAction;
 
         gameManager.PingServer();
 

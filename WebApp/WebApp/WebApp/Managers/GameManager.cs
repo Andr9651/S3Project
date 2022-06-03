@@ -4,13 +4,13 @@ using ModelLibrary.Model;
 namespace WebApp.Managers;
 public class GameManager
 {
-    private HubConnection _connection;
-    public event Action PongEvent;
+    public event Action OnPong;
+    public event Action OnStateChanged;
 
+    private HubConnection _connection;
     private GameData _gameData;
     private Dictionary<int, Purchasable> _purchasables;
 
-    public event Action StateHasChangedEvent;
 
     public GameManager()
     {
@@ -25,48 +25,51 @@ public class GameManager
             await CloseConnection();
         }
 
+        // Configure HubConnectionBuilder
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://" + ip + "/GameHub");
         builder.WithAutomaticReconnect();
         _connection = builder.Build();
 
+        // Map SignalR RPC Methods
+        // The "On" method's type parameters specifies what parameters the RPC contains
         _connection.On("Pong", Pong);
         _connection.On<int>("BalanceUpdate", BalanceUpdate);
-        _connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", ReceivePurchasables);
-        _connection.On<Dictionary<int, int>>("ReceivePurchases", ReceivePurchases);
         _connection.On<int, int>("PurchaseUpdate", ReceivePurchaseUpdate);
+        _connection.On<Dictionary<int, int>>("ReceivePurchases", ReceivePurchases);
+        _connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", ReceivePurchasables);
 
         await _connection.StartAsync();
     }
 
-    private void ReceivePurchaseUpdate(int purchaseId, int amount)
+    private void Pong()
     {
-        _gameData.Purchases[purchaseId] = amount;
-        StateHasChangedEvent?.Invoke();
-    }
-
-    private void ReceivePurchases(Dictionary<int, int> purchases)
-    {
-        _gameData.Purchases = purchases;
-        StateHasChangedEvent?.Invoke();
-    }
-
-    private void ReceivePurchasables(Dictionary<int, Purchasable> purchasables)
-    {
-        _purchasables = purchasables;
-        StateHasChangedEvent?.Invoke();
+        OnPong.Invoke();
     }
 
     private void BalanceUpdate(int balance)
     {
         _gameData.Balance = balance;
 
-        StateHasChangedEvent?.Invoke();
+        OnStateChanged?.Invoke();
     }
 
-    private void Pong()
+    private void ReceivePurchaseUpdate(int purchaseId, int amount)
     {
-        PongEvent.Invoke();
+        _gameData.Purchases[purchaseId] = amount;
+        OnStateChanged?.Invoke();
+    }
+
+    private void ReceivePurchases(Dictionary<int, int> purchases)
+    {
+        _gameData.Purchases = purchases;
+        OnStateChanged?.Invoke();
+    }
+
+    private void ReceivePurchasables(Dictionary<int, Purchasable> purchasables)
+    {
+        _purchasables = purchasables;
+        OnStateChanged?.Invoke();
     }
 
     public async Task CloseConnection()
@@ -89,10 +92,9 @@ public class GameManager
     {
         bool canPurchase = false;
 
-        Purchasable purchasable = null;
         if (_purchasables.ContainsKey(purchasableId))
         {
-            purchasable = _purchasables[purchasableId];
+            Purchasable purchasable = _purchasables[purchasableId];
             canPurchase = purchasable.Price <= _gameData.Balance;
         }
 
@@ -104,7 +106,7 @@ public class GameManager
         return _gameData.Balance;
     }
 
-    public IReadOnlyCollection<Purchasable> GetPurchasables()
+    public ICollection<Purchasable> GetPurchasables()
     {
         return _purchasables.Values;
     }
