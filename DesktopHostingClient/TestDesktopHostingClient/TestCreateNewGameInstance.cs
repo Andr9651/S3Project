@@ -47,11 +47,11 @@ public class TestCreateNewGameInstance
 
         //Act 
         gameManager.StartBalanceUpdateThread();
-        Thread.Sleep(1002);
+        Thread.Sleep(1002); // Wait for balanceUpdateThread to increment the balance.
 
         gameManager.StopBalanceUpdateThread();
         int balance = gameManager.GetBalance();
-        Thread.Sleep(1002);
+        Thread.Sleep(1002); // Wait to make sure the balance dont update anymore.
 
         //Assert
         Assert.True(gameManager.GetBalance() > 0);

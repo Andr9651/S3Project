@@ -26,14 +26,16 @@ public class TestShowRaceCondition
         //Arrange
         GameManager gameManager = GameManager.GetInstance();
         gameManager.Purchasables = new Dictionary<int, Purchasable>();
+        
         Purchasable purchasable = new Purchasable()
         {
             Price = 5
         };
         gameManager.Purchasables.Add(1, purchasable);
+
         GameData gameData = new GameData()
         {
-            Balance = 5 * repetitions
+            Balance = 5 * repetitions // Purchasable.price * repetitions
         };
         gameManager.CreateGameData(gameData);
 

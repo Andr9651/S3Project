@@ -61,33 +61,31 @@ public class TestBuyBuilding
     public void TestReceivePurchasables()
     {
         // Arrange 
-        GameManager gameManager = GameManager.GetInstance();
-
+        // Get New GameData from API.
         GameDataService gameDataService = new GameDataService(_apiUrl);
-
         Task<GameData> gameDataTask = gameDataService.CreateGameData();
         gameDataTask.Wait();
-
         GameData gameData = gameDataTask.Result;
 
-        gameManager.CreateGameData(gameData);
-
+        // Get Purchasables from API.
         PurchasableService purchasableService = new PurchasableService(_apiUrl);
-
         Task<Dictionary<int, Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
         purchasablesTask.Wait();
 
+        // Insert GameData & Purchasables into GameManager instance.
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasablesTask.Result;
 
-        //gameManager.SetupGame().Wait();
-
+        // Try starting the host server.
         HostingManager hostingManager = TryStartHost();
 
-        // Act 
+        // Create SignalR Connection to the Host GameHub
         IHubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = hubConnectionBuilder.Build();
 
+        // Act 
         Dictionary<int, Purchasable> receivedPurchasables = null;
 
         connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", (purchasables) =>
@@ -97,7 +95,8 @@ public class TestBuyBuilding
 
         connection.StartAsync().Wait();
 
-        Thread.Sleep(2000);
+        // Wait for Host server to respond with "ReceivePurchasables"
+        Thread.Sleep(500);
 
         //Assert
         Assert.NotNull(receivedPurchasables);
@@ -117,29 +116,30 @@ public class TestBuyBuilding
     public void TestBuy(int startingBalance, int purchasablePrice, int buyId, bool shouldSucceed)
     {
         // Arrange
-
-
+        // Create Test Purchasable and add it to a dictionary.
         Purchasable purchasable1 = new Purchasable()
         {
             Id = 1,
             Name = "TestPurchasable1",
             Price = purchasablePrice
         };
-
         Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
         purchasables.Add(purchasable1.Id, purchasable1);
 
+        // Create Test GameData.
         GameData gameData = new GameData()
         {
             Balance = startingBalance
         };
 
+        // Add Purchasables and GameData to GameManager instance.
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
         // Act
         bool isSuccess = gameManager.TryBuyPurchasable(buyId);
+
         // Assert
         if (shouldSucceed)
         {
@@ -160,27 +160,30 @@ public class TestBuyBuilding
     public void ReceivePurchaseUpdate()
     {
         // Arrange
+        // Create Test Purchasable and add it to a dictionary.
         Purchasable purchasable1 = new Purchasable()
         {
             Id = 1,
             Name = "TestPurchasable1",
             Price = 10
         };
-
         Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
         purchasables.Add(purchasable1.Id, purchasable1);
 
+        // Create Test GameData.
         GameData gameData = new GameData()
         {
             Balance = 15
         };
 
+        // Add Purchasables and GameData to GameManager instance.
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
         HostingManager hostingManager = TryStartHost();
 
+        // Create SignalR Connection to the Host GameHub
         HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection hubConnection = hubConnectionBuilder.Build();
@@ -195,6 +198,8 @@ public class TestBuyBuilding
         hubConnection.StartAsync().Wait();
 
         gameManager.TryBuyPurchasable(1);
+
+        // Wait to receive "PurchaseUpdate" from 
         Thread.Sleep(500);
 
         // Assert
@@ -208,27 +213,30 @@ public class TestBuyBuilding
     public void TryBuyPurchasableRPC()
     {
         // Arrange
+        // Create Test Purchasable and add it to a dictionary.
         Purchasable purchasable1 = new Purchasable()
         {
             Id = 1,
             Name = "TestPurchasable1",
             Price = 10
         };
-
         Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
         purchasables.Add(purchasable1.Id, purchasable1);
 
+        // Create Test GameData.
         GameData gameData = new GameData()
         {
             Balance = 15
         };
 
+        // Add Purchasables and GameData to GameManager instance.
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData(gameData);
         gameManager.Purchasables = purchasables;
 
         HostingManager hostingManager = TryStartHost();
 
+        // Create SignalR Connection to the Host GameHub
         HubConnectionBuilder hubConnectionBuilder = new HubConnectionBuilder();
         hubConnectionBuilder.WithUrl("http://localhost:5100/GameHub");
         HubConnection hubConnection = hubConnectionBuilder.Build();
@@ -243,6 +251,8 @@ public class TestBuyBuilding
         hubConnection.StartAsync().Wait();
 
         hubConnection.InvokeAsync("TryBuyPurchasable", 1);
+
+        // Wait to receive "PurchaseUpdate" from 
         Thread.Sleep(500);
 
         // Assert

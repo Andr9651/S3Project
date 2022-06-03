@@ -16,6 +16,8 @@ public class TestGameHostingWithIp : IDisposable
 {
     private HostingManager _hostingManager;
     private string _hostPort = "5100";
+
+    // Before each Test
     public TestGameHostingWithIp()
     {
         for (int i = 0; i < 10; i++)
@@ -35,17 +37,23 @@ public class TestGameHostingWithIp : IDisposable
         }
     }
 
+    // After each test
+    public void Dispose()
+    {
+        _hostingManager.DisposeHost();
+    }
+
     [Fact]
     [Trait("UserStory", "Join Games")]
     [Trait("UserStory", "Game Hosting with IP")]
     public void TestGetSignalRConnection()
     {
         //Arrange 
-
-        //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
+
+        //Act
         connection.StartAsync().Wait();
 
         //Assert
@@ -62,10 +70,11 @@ public class TestGameHostingWithIp : IDisposable
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData();
 
-        //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
+
+        //Act
         connection.StartAsync().Wait();
 
         Task<bool> gameDataTask = connection.InvokeAsync<bool>("HasGame");
@@ -86,11 +95,11 @@ public class TestGameHostingWithIp : IDisposable
         GameManager gameManager = GameManager.GetInstance();
         gameManager.CreateGameData();
 
-        //Act
         HubConnectionBuilder builder = new HubConnectionBuilder();
         builder.WithUrl("http://localhost:5100/GameHub");
         HubConnection connection = builder.Build();
 
+        //Act
         bool ponged = false;
 
         connection.On("Pong", () =>
@@ -101,6 +110,7 @@ public class TestGameHostingWithIp : IDisposable
         connection.StartAsync().Wait();
         connection.InvokeAsync("Ping").Wait();
 
+        // Wait for the server to respond with "Pong"
         Thread.Sleep(500);
 
         //Assert
@@ -108,10 +118,4 @@ public class TestGameHostingWithIp : IDisposable
 
         connection.DisposeAsync().AsTask().Wait();
     }
-
-    public void Dispose()
-    {
-        _hostingManager.DisposeHost();
-    }
-
 }
