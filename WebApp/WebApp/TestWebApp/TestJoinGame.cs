@@ -46,7 +46,7 @@ public class TestJoinGame
         GameManager gameManager = new GameManager();
 
         //Act
-        gameManager.ConnectToGame("127.0.0.1:5100");
+        gameManager.ConnectToGame("127.0.0.1:5100").Wait();
 
         bool receivedPong = false;
         Action pongAction = () =>
@@ -57,6 +57,7 @@ public class TestJoinGame
 
         gameManager.PingServer();
 
+        // Wait to receive pong event.
         Thread.Sleep(500);
 
         //Assert

@@ -23,6 +23,7 @@ public class SeeBalance
 
         int oldBalance = gameManager.GetBalance();
 
+        // Wait for the balance to change
         Thread.Sleep(1003);
 
         //Assert
