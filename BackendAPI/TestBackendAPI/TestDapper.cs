@@ -52,10 +52,13 @@ public class TestDapper
                 Name = "TestItem",
                 Price = 69420
             };
+
             string sqlInsert = "insert into Purchasable(name, price) values (@Name, @Price)";
             int rowsInserted = connection.Execute(sqlInsert, purchasable);
+
             //assert
             Assert.Equal(1, rowsInserted);
+
             if (rowsInserted >= 1)
             {
                 //testDelete
@@ -80,8 +83,10 @@ public class TestDapper
                 Balance = 1,
                 HostIp = "Jeg er ikke en ip"
             };
+
             string sqlInsert = "insert into GameData(balance, hostIp) values (@Balance, @HostIp)";
             int rowsInserted = connection.Execute(sqlInsert, dbGameData);
+
             //assert
             Assert.Equal(1, rowsInserted);
             if (rowsInserted >= 1)
@@ -100,8 +105,10 @@ public class TestDapper
     {
         //Arrange 
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
+
         //Act 
         GameData gameData = sqlGameDataService.CreateGameData();
+
         //Assert
         Assert.NotNull(gameData);
         Assert.NotEqual(0, gameData.Id);
@@ -130,14 +137,15 @@ public class TestDapper
     {
         //Arrange 
         SQLGameDataService sqlGameDataService = new SQLGameDataService(_dbConnectionString);
+
         //Act 
         GameData gameData = sqlGameDataService.CreateGameData();
         gameData.Purchases.Add(1, 5);
         gameData.Purchases.Add(2, 5);
 
         bool result = sqlGameDataService.SaveGameData(gameData);
-        //Assert
 
+        //Assert
         Assert.True(result);
     }
 
