@@ -27,6 +27,9 @@ public class GameManager
     // Volatile was not needed since the field is only modified by the main thread.
     public bool IsUpdateThreadRunning { get; private set; }
 
+    public int IncomePerSecond { get => CalculateIncomePerSecond(); }
+         
+
     /// <summary> Key: Purchasable.Id <br/> Value: Purchasable </summary>
     public Dictionary<int, Purchasable> Purchasables { get; set; }
 
@@ -70,7 +73,7 @@ public class GameManager
             {
                 lock (GameData)
                 {
-                    SetBalance(GetBalance() + 1);
+                    SetBalance(GetBalance() + IncomePerSecond);
                 }
 
                 NotifyBalanceChanged();
@@ -79,6 +82,21 @@ public class GameManager
         });
 
         incrementBalanceThread.Start();
+    }
+
+    private int CalculateIncomePerSecond()
+    {
+        int incomePerSecond = 1;
+
+        if (GameData.Purchases is not null)
+        {
+            foreach (KeyValuePair<int, int> purchases in GameData.Purchases)
+            {
+                incomePerSecond += Purchasables[purchases.Key].Income * purchases.Value;
+            }
+        }
+
+        return incomePerSecond;
     }
 
     public void StopBalanceUpdateThread()
