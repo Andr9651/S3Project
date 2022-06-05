@@ -16,6 +16,7 @@ public partial class Game : ComponentBase
     private long pingTime = 0;
     private Stopwatch pingTimer;
     private bool _doDelay;
+    private bool _showDebug;
     private int _delayLength = 5000;
     private GameManager gameManager = new GameManager();
 

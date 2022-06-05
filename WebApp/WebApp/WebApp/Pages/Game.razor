@@ -3,25 +3,62 @@
 @using ModelLibrary.Model;
 
 
-<h3>Game</h3>
 
-<p>Ip: @Ip</p>
-<p>PingTime: @pingTime ms</p>
 
-<p>Balance: @gameManager.GetBalance()</p>
 
-<button class="btn btn-primary" @onclick="@Ping">Ping</button>
 
-@foreach (Purchasable p in gameManager.GetPurchasables())
-{
-    <br />
-    <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
-        @p.Name @p.Price $ Count:@gameManager.GetPurchaseAmount(p.Id)
-    </button>
-}
+
+<h3>Balance: @gameManager.GetBalance() $</h3>
+<h4>Income: @gameManager.IncomePerSecond $/s</h4>
+
+
+<div class="d-inline-flex flex-wrap mt-2">
+
+    @foreach (Purchasable p in gameManager.GetPurchasables())
+    {
+        @*<div class="border border-2 bg-light vstack flex-fill">*@
+        <div class="p-2 vstack border border-2 bg-light rounded mb-2 me-2">
+            <label><b>@p.Name:</b> x @gameManager.GetPurchaseAmount(p.Id)</label>
+            <label>Income: @gameManager.GetPurchasableIncome(p.Id) $/s</label>
+
+            <label>Total income: @gameManager.GetTotalPurchasableIncome(p.Id) $/s</label>
+
+            <a class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+                Buy 1x for @p.Price$
+            </a>
+
+        </div>
+    }
+</div>
 
 <br />
+<input type="checkbox" class="btn-check mt-2" id="DebugToggle" @bind-value="@_showDebug" />
+<label class="btn btn-outline-danger" for="DebugToggle">Debug</label>
 
-<input type="checkbox" @bind-value="@_doDelay"/>
-<label>Delay Length</label>
-<input type="number" @bind-value="@_delayLength"/>
+<div class="border border-2 border-danger rounded bg-light vstack p-2 mt-2" hidden="@(!_showDebug)">
+    <label>Ip: @Ip</label>
+
+    <div>
+        <button class="btn btn-outline-danger" @onclick="@Ping">Ping</button>
+        <label>PingTime: @pingTime ms</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="delayPurchases" @bind-value="@_doDelay" />
+        <label for="delayPurchases">Delay Purchases</label>
+
+    </div>
+
+    <div class="form-floating">
+        <input class="form-control" id="delayLength" type="number" @bind-value="@_delayLength" disabled="@(!_doDelay)" />
+        <label for="delayLength">Delay Length</label>
+    </div>
+
+</div>
+
+
+
+
+
+
+

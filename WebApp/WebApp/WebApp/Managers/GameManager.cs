@@ -4,6 +4,8 @@ using ModelLibrary.Model;
 namespace WebApp.Managers;
 public class GameManager
 {
+    public int IncomePerSecond { get => CalculateIncomePerSecond(); }
+
     public event Action OnPong;
     public event Action OnStateChanged;
 
@@ -40,6 +42,21 @@ public class GameManager
         _connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", ReceivePurchasables);
 
         await _connection.StartAsync();
+    }
+
+    private int CalculateIncomePerSecond()
+    {
+        int incomePerSecond = 1;
+
+        if (_gameData.Purchases is not null)
+        {
+            foreach (KeyValuePair<int, int> purchases in _gameData.Purchases)
+            {
+                incomePerSecond += _purchasables[purchases.Key].Income * purchases.Value;
+            }
+        }
+
+        return incomePerSecond;
     }
 
     private void Pong()
@@ -121,5 +138,28 @@ public class GameManager
         }
 
         return amount;
+    }
+
+    public int GetPurchasableIncome(int purchasableId)
+    {
+        int income = 0;
+
+        if (_purchasables.ContainsKey(purchasableId))
+        {
+            income = _purchasables[purchasableId].Income;
+        }
+
+        return income;
+    }
+    public int GetTotalPurchasableIncome(int purchasableId)
+    {
+        int income = 0;
+
+        if (_gameData.Purchases.ContainsKey(purchasableId))
+        {
+            income = _purchasables[purchasableId].Income * _gameData.Purchases[purchasableId];
+        }
+
+        return income;
     }
 }
