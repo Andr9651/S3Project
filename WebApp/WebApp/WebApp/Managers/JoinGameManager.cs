@@ -7,6 +7,11 @@ public class JoinGameManager
     {
         bool isValidIp = false;
 
+        if (string.IsNullOrEmpty(ip))
+        {
+            return false;
+        }
+
         // Checks if the string is a valid ip
         // that follows this format (ddd.ddd.ddd.ddd:ddddd) where "d" is a digit.
         // This also stops negative numbers

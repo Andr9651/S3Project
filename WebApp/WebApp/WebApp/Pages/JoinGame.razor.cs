@@ -10,10 +10,12 @@ public partial class JoinGame : ComponentBase
 
     private string ip;
     private string error;
+    private bool _useValidation = true;
 
     public void ButtonJoinGame()
     {
-        if (JoinGameManager.ValidateIP(ip))
+
+        if (!_useValidation || JoinGameManager.ValidateIP(ip))
         {
             string gameURI = JoinGameManager.CreateJoinGameURI(ip);
 
@@ -22,6 +24,7 @@ public partial class JoinGame : ComponentBase
         else
         {
             error = " Incorrect IP";
+            StateHasChanged();
         }
     }
     public void ButtonJoinLocalGame()

@@ -4,14 +4,16 @@
     JoinGame
 </h3>
 
-<input @bind-value="@ip" />
-<button @onclick="ButtonJoinGame">
+<input @bind-value="@ip" placeholder="Input host IP & Port"/>
+<button class="rounded" @onclick="ButtonJoinGame">
     Join Game
 </button>
 
-<button @onclick="@ButtonJoinLocalGame">
+<button class="rounded" @onclick="@ButtonJoinLocalGame">
     Join local game
 </button>
+
+<input type="checkbox" @bind-value="@_useValidation" checked/> Use IP Validation.
 
 @if (!String.IsNullOrEmpty(error))
 {

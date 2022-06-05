@@ -12,6 +12,8 @@ public class TestJoinGame
     [InlineData("600.900.-1.000:8", false)]
     [InlineData("600.900.120.000:8080", false)]
     [InlineData("192.168.1.15", false)]
+    [InlineData("", false)]
+    [InlineData(null, false)]
     public void TestValidateIP(string ip, bool expected)
     {
         //Arrange
