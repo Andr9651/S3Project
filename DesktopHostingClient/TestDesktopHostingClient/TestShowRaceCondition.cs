@@ -29,6 +29,7 @@ public class TestShowRaceCondition
         
         Purchasable purchasable = new Purchasable()
         {
+            Id = 1,
             Price = 5
         };
         gameManager.Purchasables.Add(1, purchasable);

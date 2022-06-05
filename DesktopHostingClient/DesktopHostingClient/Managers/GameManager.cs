@@ -28,7 +28,7 @@ public class GameManager
     public bool IsUpdateThreadRunning { get; private set; }
 
     public int IncomePerSecond { get => CalculateIncomePerSecond(); }
-         
+
 
     /// <summary> Key: Purchasable.Id <br/> Value: Purchasable </summary>
     public Dictionary<int, Purchasable> Purchasables { get; set; }
@@ -170,24 +170,65 @@ public class GameManager
     {
         bool isSuccess = false;
 
-        //Locks gamedata from being used outside this scope
-        lock (GameData)
+        if (Purchasables.ContainsKey(purchasableId))
         {
-            if (Purchasables.ContainsKey(purchasableId))
-            {
-                Purchasable purchasable = Purchasables[purchasableId];
+            Purchasable purchasable = Purchasables[purchasableId];
 
+            // Locks gamedata from being used outside this scope
+            lock (GameData)
+            {
+                // Placing GetBalance inside the lock ensures Repeatable Read
                 int balance = GetBalance();
                 if (balance >= purchasable.Price)
                 {
-                    SetBalance(balance - purchasable.Price);
-                    BuyPurchasable(purchasableId);
+                    BuyPurchasable(purchasable, 1);
                     isSuccess = true;
                 }
             }
         }
 
         return isSuccess;
+    }
+
+    public int BuyMaxPurchasables(int purchasableId)
+    {
+        int purchasedAmount = 0;
+
+        if (Purchasables.ContainsKey(purchasableId))
+        {
+            Purchasable purchasable = Purchasables[purchasableId];
+
+            if (purchasable.Price > 0)
+            {
+
+
+                lock (GameData)
+                {
+                    int balance = GetBalance();
+
+                    // Integer division always rounds down (truncates)
+                    purchasedAmount = balance / purchasable.Price;
+                    if (purchasedAmount > 0)
+                    {
+                        BuyPurchasable(purchasable, purchasedAmount);
+                    }
+                }
+            }
+        }
+        return purchasedAmount;
+    }
+
+    private void BuyPurchasable(Purchasable purchasable, int amount)
+    {
+        SetBalance(GetBalance() - purchasable.Price);
+
+        int newPurchasedAmount = GetPurchasedAmount(purchasable.Id) + amount;
+        GameData.Purchases[purchasable.Id] = newPurchasedAmount;
+
+        if (OnPurchase is not null)
+        {
+            OnPurchase(purchasable.Id, newPurchasedAmount);
+        }
     }
 
     public Dictionary<int, int> GetPurchases()
@@ -204,17 +245,6 @@ public class GameManager
         else
         {
             return 0;
-        }
-    }
-
-    private void BuyPurchasable(int purchasableId)
-    {
-        int newPurchasedAmount = GetPurchasedAmount(purchasableId) + 1;
-        GameData.Purchases[purchasableId] = newPurchasedAmount;
-
-        if (OnPurchase is not null)
-        {
-            OnPurchase(purchasableId, newPurchasedAmount);
         }
     }
 

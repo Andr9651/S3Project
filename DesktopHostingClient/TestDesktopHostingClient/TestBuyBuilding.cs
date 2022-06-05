@@ -260,4 +260,38 @@ public class TestBuyBuilding
 
         hostingManager.DisposeHost();
     }
+
+    [Theory]
+    [Trait("UserStory", "Buy Buildings")]
+    [InlineData(20,7,2)]
+    [InlineData(1,7,0)]
+    [InlineData(1,1,1)]
+    [InlineData(1,0,0)]
+    [InlineData(1,-1,0)]
+    public void BuyMaxPurchasables(int balance, int price, int expectedAmount)
+    {
+        // Arrange
+        GameData gameData = new GameData()
+        {
+            Balance = balance
+        };
+
+        Purchasable purchasable = new Purchasable()
+        {
+            Id = 1,
+            Price = price
+        };
+        Dictionary<int, Purchasable> purchasables = new Dictionary<int, Purchasable>();
+        purchasables.Add(1, purchasable);
+
+        GameManager gameManager = GameManager.GetInstance();
+        gameManager.Purchasables = purchasables;
+        gameManager.CreateGameData(gameData);
+
+        // Act
+        int purchasedAmount = gameManager.BuyMaxPurchasables(1);
+
+        // Assert
+        Assert.Equal(expectedAmount, purchasedAmount);
+    }
 }
