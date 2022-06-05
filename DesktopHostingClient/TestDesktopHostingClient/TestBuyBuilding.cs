@@ -264,6 +264,7 @@ public class TestBuyBuilding
     [Theory]
     [Trait("UserStory", "Buy Buildings")]
     [InlineData(20,7,2)]
+    [InlineData(20,2,10)]
     [InlineData(1,7,0)]
     [InlineData(1,1,1)]
     [InlineData(1,0,0)]
@@ -289,9 +290,10 @@ public class TestBuyBuilding
         gameManager.CreateGameData(gameData);
 
         // Act
-        int purchasedAmount = gameManager.BuyMaxPurchasables(1);
+        int purchasedAmount = gameManager.BuyMaxPurchasable(1);
 
         // Assert
         Assert.Equal(expectedAmount, purchasedAmount);
+        Assert.Equal(balance-(price*expectedAmount), gameManager.GetBalance());
     }
 }

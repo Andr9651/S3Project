@@ -39,7 +39,7 @@ public partial class MainWindow : Window
         this.Close();
     }
 
-    private void Load_Game_Click(object sender, RoutedEventArgs e)
+    private async void Load_Game_Click(object sender, RoutedEventArgs e)
     {
         string loadGameIdText = LoadGameTextBox.Text;
 
@@ -47,11 +47,27 @@ public partial class MainWindow : Window
         // and allows variable to keep changes made inside the function
         if (int.TryParse(loadGameIdText, out int loadGameId))
         {
-            HostingWindow hostingWindow = new HostingWindow(loadGameId);
-            hostingWindow.Show();
+            GameManager gameManager = GameManager.GetInstance();
+            if (await gameManager.DoesGameDataIdExist(loadGameId))
+            {
 
-            this.Close();
-        } else
+
+                HostingWindow hostingWindow = new HostingWindow(loadGameId);
+                hostingWindow.Show();
+
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"{loadGameIdText} does not exist",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+        else
         {
             MessageBox.Show(
                 $"{loadGameIdText} is not a valid id",

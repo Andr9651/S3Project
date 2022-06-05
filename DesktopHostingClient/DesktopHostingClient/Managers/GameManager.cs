@@ -124,6 +124,14 @@ public class GameManager
         }
     }
 
+    public async Task<bool> DoesGameDataIdExist(int gameDataId)
+    {
+        GameDataService gameDataService = new GameDataService();
+        
+        
+        return (await gameDataService.LoadGameData(gameDataId)) is not null;
+    }
+
     public async Task SetupGame(int? loadedGameId = null)
     {
         PurchasableService purchasableService = new PurchasableService();
@@ -190,7 +198,7 @@ public class GameManager
         return isSuccess;
     }
 
-    public int BuyMaxPurchasables(int purchasableId)
+    public int BuyMaxPurchasable(int purchasableId)
     {
         int purchasedAmount = 0;
 
@@ -220,7 +228,7 @@ public class GameManager
 
     private void BuyPurchasable(Purchasable purchasable, int amount)
     {
-        SetBalance(GetBalance() - purchasable.Price);
+        SetBalance(GetBalance() - purchasable.Price * amount);
 
         int newPurchasedAmount = GetPurchasedAmount(purchasable.Id) + amount;
         GameData.Purchases[purchasable.Id] = newPurchasedAmount;
