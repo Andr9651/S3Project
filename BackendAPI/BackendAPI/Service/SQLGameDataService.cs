@@ -37,7 +37,7 @@ public class SQLGameDataService
         bool result = false;
 
         string sqlQueryUpdateGameData = "Update GameData " +
-            "set balance = @balance, hostIp = @hostIp " +
+            "set balance = @balance " +
             "where id = @id";
         string sqlQueryUpdateGamePurchases = "update gamepurchase " +
             "set amount = @amount " +
@@ -105,7 +105,7 @@ public class SQLGameDataService
 
         string sqlQueryCreateGameData = "insert into GameData " +
             "output inserted.id " +
-            "values (@Balance, @Hostip)";
+            "values (@Balance)";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {

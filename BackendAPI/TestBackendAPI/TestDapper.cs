@@ -83,15 +83,16 @@ public class TestDapper
                 Balance = 1
             };
 
-            string sqlInsert = "insert into GameData(balance, hostIp) values (@Balance, @HostIp)";
-            int rowsInserted = connection.Execute(sqlInsert, dbGameData);
+            string sqlInsert = "insert into GameData(balance) output inserted.id values (@Balance)";
+            int? insertedId = connection.ExecuteScalar<int?>(sqlInsert, dbGameData);
 
             //assert
-            Assert.Equal(1, rowsInserted);
-            if (rowsInserted >= 1)
+            Assert.NotNull(insertedId);
+            if (insertedId is not null)
             {
                 //testDelete
-                string sqlDelete = "delete from GameData where hostIp = @HostIp";
+                dbGameData.Id = insertedId.Value;
+                string sqlDelete = "delete from GameData where Id = @Id";
                 int rowsDeleted = connection.Execute(sqlDelete, dbGameData);
                 Assert.True(rowsDeleted > 0);
             }
