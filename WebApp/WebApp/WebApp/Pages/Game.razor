@@ -23,9 +23,12 @@
 
             <label>Total income: @gameManager.GetTotalPurchasableIncome(p.Id) $/s</label>
 
-            <a class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+            <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
                 Buy 1x for @p.Price$
-            </a>
+            </button>
+            <button class="btn btn-primary" @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
+                Buy Max
+            </button>
 
         </div>
     }

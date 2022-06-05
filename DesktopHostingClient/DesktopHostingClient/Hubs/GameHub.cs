@@ -46,8 +46,8 @@ public class GameHub : Hub
         return GameManager.TryBuyPurchasable(purchasableId);
     }
 
-    public int BuyMaxPurchasables(int purchasableId)
+    public int BuyMaxPurchasable(int purchasableId)
     {
-        return GameManager.BuyMaxPurchasables(purchasableId);
+        return GameManager.BuyMaxPurchasable(purchasableId);
     }
 }

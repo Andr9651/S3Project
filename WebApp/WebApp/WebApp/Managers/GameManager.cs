@@ -105,6 +105,11 @@ public class GameManager
         return await _connection.InvokeAsync<bool>("TryBuyPurchasable", purchasableId);
     }
 
+    public async Task<int> BuyMaxPurchasable(int purchasableId)
+    {
+        return await _connection.InvokeAsync<int>("BuyMaxPurchasable", purchasableId);
+    }
+
     public bool CanBuyPurchasable(int purchasableId)
     {
         bool canPurchase = false;
