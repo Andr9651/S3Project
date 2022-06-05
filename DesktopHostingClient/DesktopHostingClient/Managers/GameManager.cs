@@ -111,16 +111,20 @@ public class GameManager
         PurchasableService purchasableService = new PurchasableService();
         GameDataService gameDataService = new GameDataService();
 
-        Purchasables = await purchasableService.GetPurchasables();
+        Task<Dictionary<int, Purchasable>> purchasablesTask = purchasableService.GetPurchasables();
 
+        Task<GameData> gameDataTask;
         if (loadedGameId is null)
         {
-            GameData = await gameDataService.CreateGameData();
+            gameDataTask = gameDataService.CreateGameData();
         }
         else
         {
-            GameData = await gameDataService.LoadGameData(loadedGameId.Value);
+            gameDataTask = gameDataService.LoadGameData(loadedGameId.Value);
         }
+
+        Purchasables = await purchasablesTask;
+        GameData = await gameDataTask;
 
         StartBalanceUpdateThread();
     }

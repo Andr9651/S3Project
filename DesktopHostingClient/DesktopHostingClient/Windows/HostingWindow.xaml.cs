@@ -22,15 +22,20 @@ public partial class HostingWindow : Window
     // Gets called when the window opens
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
+        Task delayTask = Task.Delay(300);
+
+        Task<string> IpTask = HostingManager.GetPublicIp();
         // Start Game and Hosting
         HostingManager.SetupSignalRHost();
         await HostingManager.StartHosting();
         await GameManager.SetupGame(_loadGameId);
 
         // Set content of labels
-        LabelIpAddress.Content = await HostingManager.GetPublicIp();
+        LabelIpAddress.Content = await IpTask;
         GameId.Content = GameManager.GetGameId();
         LabelPort.Content = HostingManager.Port;
+
+        await delayTask;
     }
 
     // Gets called when the window closes
