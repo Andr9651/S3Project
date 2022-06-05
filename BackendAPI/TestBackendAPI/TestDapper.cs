@@ -80,8 +80,7 @@ public class TestDapper
             //start with test insert
             DBGameData dbGameData = new DBGameData
             {
-                Balance = 1,
-                HostIp = "Jeg er ikke en ip"
+                Balance = 1
             };
 
             string sqlInsert = "insert into GameData(balance, hostIp) values (@Balance, @HostIp)";
@@ -123,7 +122,6 @@ public class TestDapper
 
         //Act 
         GameData gameData = sqlGameDataService.CreateGameData();
-        gameData.Ip = "Jeg er ikke en ip";
 
         bool result = sqlGameDataService.SaveGameData(gameData);
 

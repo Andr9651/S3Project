@@ -9,7 +9,6 @@ public class ModelConverter
         {
             Id = dbGameData.Id,
             Balance = dbGameData.Balance,
-            Ip = dbGameData.HostIp,
             Purchases = new Dictionary<int, int>()
         };
 
@@ -29,8 +28,7 @@ public class ModelConverter
         DBGameData dbGameData = new DBGameData()
         {
             Id = gameData.Id,
-            Balance = gameData.Balance,
-            HostIp = gameData.Ip,
+            Balance = gameData.Balance
         };
 
         return dbGameData;
