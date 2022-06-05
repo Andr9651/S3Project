@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ModelLibrary.Model;
 public class GameData
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
     public Dictionary<int, int> Purchases { get; set; }
     public int Balance
     {
@@ -20,7 +20,6 @@ public class GameData
     public GameData()
     {
         Purchases = new Dictionary<int, int>();
-        Balance = 0;
     }
 }
 
