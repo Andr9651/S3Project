@@ -2,23 +2,13 @@
 @page "/Game/{ip}";
 @using ModelLibrary.Model;
 
-
-
-
-
-
-
 <h3>Balance: @gameManager.GetBalance() $</h3>
 <h4>Income: @gameManager.IncomePerSecond $/s</h4>
-
 
 <div class="d-inline-flex flex-wrap mt-2">
 
     @foreach (Purchasable p in gameManager.GetPurchasables())
     {
-
-
-
         <div class="p-2 vstack border border-2 bg-light rounded mb-2 me-2">
             <label><b>@p.Name:</b> x @gameManager.GetPurchaseAmount(p.Id)</label>
             <label>Income: @gameManager.GetPurchasableIncome(p.Id) $/s</label>
@@ -43,9 +33,6 @@
                     Buy Max
                 </button>
             }
-
-
-
         </div>
     }
 </div>
