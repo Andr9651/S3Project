@@ -11,7 +11,7 @@ public partial class Game : ComponentBase
     public string Ip { get; set; }
 
     [Inject]
-    public IJSRuntime JsRuntime { get; set;}
+    public IJSRuntime JsRuntime { get; set; }
 
     private long pingTime = 0;
     private Stopwatch pingTimer;
@@ -28,23 +28,16 @@ public partial class Game : ComponentBase
 
     private async void TryBuyPurchasable(int purchasableId)
     {
-        if (gameManager.CanBuyPurchasable(purchasableId))
+        if (_doDelay)
         {
-            if (_doDelay)
-            {
-                await Task.Delay(_delayLength);
-            }
-
-            bool success = await gameManager.TryBuyPurchasable(purchasableId);
-
-            if (!success)
-            {
-                await JsRuntime.InvokeVoidAsync("alert", "Somebody bought something before you!");
-            }
+            await Task.Delay(_delayLength);
         }
-        else
+
+        bool success = await gameManager.TryBuyPurchasable(purchasableId);
+
+        if (!success)
         {
-            await JsRuntime.InvokeVoidAsync("alert", "Insufficient funds!");
+            await JsRuntime.InvokeVoidAsync("alert", "Somebody bought something before you!");
         }
     }
 
