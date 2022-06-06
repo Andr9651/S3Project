@@ -17,6 +17,8 @@ public partial class HostingWindow : Window
 
         GameManager = GameManager.GetInstance();
         HostingManager = new HostingManager();
+
+        this.DataContext = GameManager;
     }
 
     // Gets called when the window opens

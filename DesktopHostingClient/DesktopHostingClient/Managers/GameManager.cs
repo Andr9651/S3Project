@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ModelLibrary.Model;
 using System.Threading;
 using DesktopHostingClient.Service;
+using System.ComponentModel;
 
 namespace DesktopHostingClient.Managers;
 
@@ -16,7 +17,7 @@ namespace DesktopHostingClient.Managers;
 /// <br/>
 /// This includes loading and saving GameData and managing game update loops.
 /// </summary>
-public class GameManager
+public class GameManager : INotifyPropertyChanged
 {
     /// <value> True if a GameData instance is present </value>
     public bool HasGameData
@@ -29,6 +30,8 @@ public class GameManager
 
     public int IncomePerSecond { get => CalculateIncomePerSecond(); }
 
+    public int Balance { get => GameData?.Balance ?? 0; }
+
 
     /// <summary> Key: Purchasable.Id <br/> Value: Purchasable </summary>
     public Dictionary<int, Purchasable> Purchasables { get; set; }
@@ -38,6 +41,9 @@ public class GameManager
 
     /// <summary> Sends Purchasable.Id and bought amount as parameters </summary>
     public event Action<int, int> OnPurchase;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     private GameData GameData { get; set; }
     private Thread incrementBalanceThread;
     private static GameManager _instance;
@@ -88,7 +94,7 @@ public class GameManager
     {
         int incomePerSecond = 1;
 
-        if (GameData.Purchases is not null)
+        if (GameData?.Purchases is not null)
         {
             foreach (KeyValuePair<int, int> purchases in GameData.Purchases)
             {
@@ -127,8 +133,8 @@ public class GameManager
     public async Task<bool> DoesGameDataIdExist(int gameDataId)
     {
         GameDataService gameDataService = new GameDataService();
-        
-        
+
+
         return (await gameDataService.LoadGameData(gameDataId)) is not null;
     }
 
@@ -153,6 +159,8 @@ public class GameManager
         GameData = await gameDataTask;
 
         StartBalanceUpdateThread();
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Balance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IncomePerSecond)));
     }
 
     public void ShutdownGame()
@@ -168,10 +176,9 @@ public class GameManager
     private void SetBalance(int newBalance)
     {
         GameData.Balance = newBalance;
-        if (OnBalanceChanged is not null)
-        {
-            OnBalanceChanged(newBalance);
-        }
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Balance)));
+        OnBalanceChanged?.Invoke(newBalance);
     }
 
     public bool TryBuyPurchasable(int purchasableId)
@@ -233,10 +240,8 @@ public class GameManager
         int newPurchasedAmount = GetPurchasedAmount(purchasable.Id) + amount;
         GameData.Purchases[purchasable.Id] = newPurchasedAmount;
 
-        if (OnPurchase is not null)
-        {
-            OnPurchase(purchasable.Id, newPurchasedAmount);
-        }
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IncomePerSecond)));
+        OnPurchase?.Invoke(purchasable.Id, newPurchasedAmount);
     }
 
     public Dictionary<int, int> GetPurchases()

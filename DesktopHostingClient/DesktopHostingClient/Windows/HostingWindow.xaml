@@ -7,14 +7,35 @@
         mc:Ignorable="d"
         Title="Window1" Height="450" Width="800" Loaded="OnLoad" Closed="OnClose">
     <Grid>
-        <Button x:Name="Stop_Game" Content="StopGame" HorizontalAlignment="Left" Margin="35,136,0,0" VerticalAlignment="Top" Click="Stop_Game_Click"/>
-        <Label Content="Public Ip Address" HorizontalAlignment="Left" Margin="35,93,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelIpAddress" Content="xxx.xxx.xxx.xxx:xxx" HorizontalAlignment="Left" Margin="130,93,0,0" VerticalAlignment="Top"/>
-        <Label Content="Port" HorizontalAlignment="Left" Margin="249,93,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056"/>
-        <Label x:Name ="LabelPort" Content="Label" HorizontalAlignment="Left" Margin="286,93,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.342,0.412"/>
-        <Button Content="Save Game" HorizontalAlignment="Left" Margin="113,136,0,0" VerticalAlignment="Top" Width="69" Click="Save_Game_Click"/>
-        <Label Content="Game Id" HorizontalAlignment="Left" Margin="249,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056"/>
-        <Label x:Name="GameId" Content="xx" HorizontalAlignment="Left" Margin="314,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="Stop_Game" Content="StopGame" HorizontalAlignment="Left" Margin="35,136,0,0" VerticalAlignment="Top" Click="Stop_Game_Click" Height="20" Width="59"/>
+        <Label Content="Public Ip Address" HorizontalAlignment="Left" Margin="35,93,0,0" VerticalAlignment="Top" Height="26" Width="101"/>
+        <Label x:Name="LabelIpAddress" Content="xxx.xxx.xxx.xxx:xxx" HorizontalAlignment="Left" Margin="130,93,0,0" VerticalAlignment="Top" Height="26" Width="103"/>
+        <Label Content="Port" HorizontalAlignment="Left" Margin="249,93,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056" Height="26" Width="32"/>
+        <Label x:Name ="LabelPort" Content="Label" HorizontalAlignment="Left" Margin="286,93,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.342,0.412" Height="26" Width="38"/>
+        <Button Content="Save Game" HorizontalAlignment="Left" Margin="113,136,0,0" VerticalAlignment="Top" Width="69" Click="Save_Game_Click" Height="20"/>
+        <Label Content="Game Id" HorizontalAlignment="Left" Margin="249,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056" Height="26" Width="55"/>
+        <Label x:Name="GameId" Content="xx" HorizontalAlignment="Left" Margin="314,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056" Height="26" Width="21"/>
+
+        <StackPanel Grid.Column="1">
+            <!--<StackPanel Orientation="Horizontal">
+                <Label>Connected Clients:</Label>
+                <Label x:Name="LblClientCount">6</Label>
+            </StackPanel>-->
+            <Label>Game Status</Label>
+            <StackPanel x:Name="PanelBalance" Orientation="Horizontal">
+                <Label>Balance:</Label>
+                <Label x:Name="LblBalance" Content="{Binding Path=Balance}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Income</Label>
+                <Label x:Name="LblIncome" Content="{Binding IncomePerSecond}"/>
+            </StackPanel>
+        </StackPanel>
+
 
     </Grid>
 </Window>

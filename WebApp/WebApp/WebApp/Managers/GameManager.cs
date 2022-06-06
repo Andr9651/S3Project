@@ -29,7 +29,7 @@ public class GameManager
 
         // Configure HubConnectionBuilder
         HubConnectionBuilder builder = new HubConnectionBuilder();
-        builder.WithUrl("http://" + ip + "/GameHub");
+        builder.WithUrl("https://" + ip + "/GameHub");
         builder.WithAutomaticReconnect();
         _connection = builder.Build();
 
