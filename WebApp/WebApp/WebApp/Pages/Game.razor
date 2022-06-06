@@ -16,19 +16,35 @@
 
     @foreach (Purchasable p in gameManager.GetPurchasables())
     {
-        @*<div class="border border-2 bg-light vstack flex-fill">*@
+
+
+
         <div class="p-2 vstack border border-2 bg-light rounded mb-2 me-2">
             <label><b>@p.Name:</b> x @gameManager.GetPurchaseAmount(p.Id)</label>
             <label>Income: @gameManager.GetPurchasableIncome(p.Id) $/s</label>
 
             <label>Total income: @gameManager.GetTotalPurchasableIncome(p.Id) $/s</label>
 
-            <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
-                Buy 1x for @p.Price$
-            </button>
-            <button class="btn btn-primary" @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
-                Buy Max
-            </button>
+            @if (gameManager.CanBuyPurchasable(p.Id))
+            {
+                <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+                    Buy 1x for @p.Price$
+                </button>
+                <button class="btn btn-primary" @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
+                    Buy Max
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>
+                    Buy 1x for @p.Price$
+                </button>
+                <button class="btn btn-primary" disabled>
+                    Buy Max
+                </button>
+            }
+
+
 
         </div>
     }

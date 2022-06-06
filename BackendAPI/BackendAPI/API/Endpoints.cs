@@ -45,7 +45,6 @@ public static class Endpoints
     // get its value from the HTTP Request Body.
     private static IResult PutGameData([FromBody] GameData gameData, IGameDataService gameDataService)
     {
-
         bool Success = gameDataService.SaveGameData(gameData);
 
         return Success ? Results.Ok() : Results.BadRequest();
