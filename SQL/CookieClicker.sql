@@ -6,14 +6,14 @@ use CookieClicker
 
 Create table GameData (
 	id int primary key identity not null,
-	balance int,
-	hostIp varchar(32)
+	balance int default(0)
 );
 
 create table Purchasable(
 	id int primary key identity not null, 
 	name varchar(128),
-	price int
+	price int default(1) not null,
+	income int default(0) not null
 ); 
 
 create table GamePurchase(
