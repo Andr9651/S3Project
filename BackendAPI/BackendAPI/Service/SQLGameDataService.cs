@@ -31,7 +31,9 @@ public class SQLGameDataService : IGameDataService
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            List<DBPurchasable> dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToList();
+            List<DBPurchasable> dbPurchasables = connection
+                .Query<DBPurchasable>(sqlQuery)
+                .ToList();
 
             purchasables = dbPurchasables
                 .ConvertAll<Purchasable>(ModelConverter.ToPurchasable)
@@ -56,7 +58,6 @@ public class SQLGameDataService : IGameDataService
             "Values (@gameDataId, @purchasableId, @amount)";
 
         DBGameData dbGameData = ModelConverter.ToDBGameData(gameData);
-
         List<DBGamePurchase> dbGamePurchases = ModelConverter.ToDBGamePurchases(gameData);
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
@@ -65,42 +66,41 @@ public class SQLGameDataService : IGameDataService
             connection.Open();
             using (SqlTransaction SqlTransaction = connection.BeginTransaction())
             {
-                bool error = false;
-
-                int linesChangedGameData = connection.Execute(
-                    sqlQueryUpdateGameData,
-                    dbGameData, // acts as parameters.
-                    SqlTransaction
-                );
-
-                if (linesChangedGameData == 0)
+                try
                 {
-                    error = true;
-                }
-
-                if (!error && dbGamePurchases.Count > 0)
-                {
-                    int linesChangedGamePurchases = connection.Execute(
-                        sqlQueryUpdateGamePurchases,
-                        dbGamePurchases, // acts as parameters.
+                    int linesChangedGameData = connection.Execute(
+                        sqlQueryUpdateGameData,
+                        dbGameData, // acts as parameters.
                         SqlTransaction
                     );
 
-                    if (linesChangedGamePurchases == 0)
+                    if (linesChangedGameData == 0)
                     {
-                        error = true;
+                        throw new Exception("GameData wasn't saved");
                     }
-                }
 
-                if (error)
+                    if (dbGamePurchases.Count > 0)
+                    {
+                        int linesChangedGamePurchases = connection.Execute(
+                            sqlQueryUpdateGamePurchases,
+                            dbGamePurchases, // acts as parameters.
+                            SqlTransaction
+                        );
+
+                        if (linesChangedGamePurchases == 0)
+                        {
+                            throw new Exception("GamePurchases wasn't saved");
+                        }
+                    }
+
+                    SqlTransaction.Commit();
+                    result = true;
+
+                }
+                catch (Exception)
                 {
                     SqlTransaction.Rollback();
                     result = false;
-                }
-                else
-                {
-                    SqlTransaction.Commit();
-                    result = true;
                 }
             }
         }
