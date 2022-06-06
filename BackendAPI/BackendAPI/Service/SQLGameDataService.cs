@@ -16,6 +16,11 @@ public class SQLGameDataService
         _dbConnectionString = connectionString;
     }
 
+    public SQLGameDataService(IConfiguration configuration)
+    {
+        _dbConnectionString = configuration.GetConnectionString("ConnectMsSqlString");
+    }
+
 
     /// <returns> A Dictionary mapping a Purchaseable.Id to Purchaseable</returns>
     public Dictionary<int, DBPurchasable> GetPurchasables()

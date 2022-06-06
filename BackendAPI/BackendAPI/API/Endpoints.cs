@@ -5,112 +5,53 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackendAPI.API;
 
-public class Endpoints
+public static class Endpoints
 {
-    public static void SetupEndpoints(WebApplication webApplication)
+    private static string _connectionString;
+
+    public static void SetupEndpoints(this WebApplication webApplication)
     {
-        // Return JSON object with all available Purchaseables with the
-        // purchasable's Id as keys.
-        webApplication.MapGet("/Purchasable", () =>
-        {
-            // First get the purchasables from the database.
-            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
-            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
-            Dictionary<int, DBPurchasable> purchasables = gameDataService.GetPurchasables();
+        _connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
 
-            // Construct the HTTP result with proper status code.
-            // If there is no need for status codes AspNetCore will convert
-            // a returned value to HTTPResult with status code 200 on it's own.
-            IResult HTTPResult;
-            if (purchasables is null)
-            {
-                // 500 = server error
-                HTTPResult = Results.StatusCode(500);
-            }
-            else
-            {
-                // Status code for OK = 200
-                // This method automatically converts the dictionary to a JSON object.
-                HTTPResult = Results.Ok(purchasables);
-            }
-            
-            return HTTPResult;
-        });
-
-        webApplication.MapGet("/GameData/{id}", (int id) =>
-        {
-            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
-
-            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
-
-            GameData gameData = gameDataService.GetGameData(id);
-
-            IResult HTTPResult;
-
-            if (gameData is null)
-            {
-                HTTPResult = Results.NotFound();
-            }
-            else
-            {
-                HTTPResult = Results.Ok(gameData);
-            }
-
-            return HTTPResult;
-        });
-
-        webApplication.MapPost("/GameData", () =>
-        {
-            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
-
-            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
-
-            GameData gameData = gameDataService.CreateGameData();
-
-            IResult HTTPResult;
-
-            if (gameData is null || gameData.Id == 0)
-            {
-                HTTPResult = Results.StatusCode(500);
-            }
-            else
-            {
-                HTTPResult = Results.Ok(gameData);
-            }
-            return HTTPResult;
-        });
-
-        // The [FromBody] attribute, specifies that the gamedata parameter should
-        // get its value from the HTTP Request Body.
-        webApplication.MapPut("/GameData", ([FromBody] GameData gameData) =>
-        {
-            string connectionString = webApplication.Configuration.GetConnectionString("ConnectMsSqlString");
-
-            SQLGameDataService gameDataService = new SQLGameDataService(connectionString);
-
-            bool Success = gameDataService.SaveGameData(gameData);
-
-            IResult HTTPResult;
-
-            if (Success)
-            {
-                HTTPResult = Results.Ok();
-            }
-            else
-            {
-                HTTPResult = Results.BadRequest();
-            }
-
-            return HTTPResult;
-        });
+        webApplication.MapGet("/Purchasable", GetPurchasable);
+        webApplication.MapGet("/GameData/{id}", GetGameData);
+        webApplication.MapPost("/GameData", PostGameData);
+        webApplication.MapPut("/GameData", PutGameData);
     }
 
-    // This is how it would have looked as an extension method.
-    // public static void SetupEndpoints(this WebApplication webApplication)
-    // {
-    //     ... 
-    // }
+    // Return JSON object with all available Purchaseables with the
+    // purchasable's Id as keys.
+    private static IResult GetPurchasable(SQLGameDataService gameDataService)
+    {
+        Dictionary<int, DBPurchasable> purchasables = gameDataService.GetPurchasables();
+        bool success = purchasables is not null;
 
-    // Calling it would look like this:
-    // app.SetupEndpoints();
+        return success ? Results.Ok(purchasables) : Results.StatusCode(500);
+    }
+
+    private static IResult GetGameData(int id, SQLGameDataService gameDataService)
+    {
+        GameData gameData = gameDataService.GetGameData(id);
+        bool success = gameData is not null;
+
+        return success ? Results.Ok(gameData) : Results.NotFound();
+    }
+
+    private static IResult PostGameData(SQLGameDataService gameDataService)
+    {
+        GameData gameData = gameDataService.CreateGameData();
+        bool success = gameData is not null && gameData.Id > 0;
+
+        return success ? Results.Ok(gameData) : Results.StatusCode(500);
+    }
+
+    // The [FromBody] attribute, specifies that the gamedata parameter should
+    // get its value from the HTTP Request Body.
+    private static IResult PutGameData([FromBody] GameData gameData, SQLGameDataService gameDataService)
+    {
+
+        bool Success = gameDataService.SaveGameData(gameData);
+
+        return Success ? Results.Ok() : Results.BadRequest();
+    }
 }
