@@ -3,7 +3,7 @@ using BackendAPI.Service;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<SQLGameDataService>();
+builder.Services.AddSingleton<IGameDataService, SQLGameDataService>();
 
 WebApplication app = builder.Build();
 

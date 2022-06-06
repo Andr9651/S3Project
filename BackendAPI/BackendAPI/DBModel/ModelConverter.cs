@@ -54,4 +54,17 @@ public class ModelConverter
 
         return dbGamePurchases;
     }
+
+    public static Purchasable ToPurchasable(DBPurchasable dBPurchasable)
+    {
+        Purchasable purchasable = new Purchasable()
+        {
+            Id = dBPurchasable.Id,
+            Name = dBPurchasable.Name,
+            Price = dBPurchasable.Price,
+            Income = dBPurchasable.Income
+        };
+
+        return purchasable;
+    }
 }

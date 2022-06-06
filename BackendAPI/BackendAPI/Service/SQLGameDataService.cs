@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace BackendAPI.Service;
 
-public class SQLGameDataService
+public class SQLGameDataService : IGameDataService
 {
     private readonly string _dbConnectionString;
 
@@ -23,18 +23,22 @@ public class SQLGameDataService
 
 
     /// <returns> A Dictionary mapping a Purchaseable.Id to Purchaseable</returns>
-    public Dictionary<int, DBPurchasable> GetPurchasables()
+    public Dictionary<int, Purchasable> GetPurchasables()
     {
-        Dictionary<int, DBPurchasable> dbPurchasables = null;
+        Dictionary<int, Purchasable> purchasables = null;
 
         string sqlQuery = "select * from Purchasable";
 
         using (SqlConnection connection = new SqlConnection(_dbConnectionString))
         {
-            dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToDictionary(p => p.Id);
+            List<DBPurchasable> dbPurchasables = connection.Query<DBPurchasable>(sqlQuery).ToList();
+
+            purchasables = dbPurchasables
+                .ConvertAll<Purchasable>(ModelConverter.ToPurchasable)
+                .ToDictionary(p => p.Id);
         }
 
-        return dbPurchasables;
+        return purchasables;
     }
 
     public bool SaveGameData(GameData gameData)
