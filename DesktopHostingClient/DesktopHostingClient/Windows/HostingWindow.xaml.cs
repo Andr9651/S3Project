@@ -66,7 +66,7 @@ public partial class HostingWindow : Window
 
         if (messageBoxResult == MessageBoxResult.Yes)
         {
-           savedSuccessfully = await GameManager.SaveGame();
+            savedSuccessfully = await GameManager.SaveGame();
         }
 
         return savedSuccessfully;

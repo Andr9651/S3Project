@@ -21,10 +21,6 @@
         <Label x:Name="GameId" Content="xx" HorizontalAlignment="Left" Margin="314,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.382,-0.056" Height="26" Width="21"/>
 
         <StackPanel Grid.Column="1">
-            <!--<StackPanel Orientation="Horizontal">
-                <Label>Connected Clients:</Label>
-                <Label x:Name="LblClientCount">6</Label>
-            </StackPanel>-->
             <Label>Game Status</Label>
             <StackPanel x:Name="PanelBalance" Orientation="Horizontal">
                 <Label>Balance:</Label>

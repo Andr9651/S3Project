@@ -20,9 +20,9 @@ public class HostingManager
 
     public HostingManager(string? port = null)
     {
-        if(port is null)
+        if (port is null)
         {
-        Port = ConfigurationManager.ConnectionStrings["HostPort"].ToString() ;
+            Port = ConfigurationManager.ConnectionStrings["HostPort"].ToString();
         }
         else
         {
@@ -79,9 +79,10 @@ public class HostingManager
             app.UseRouting();
 
             // Creates an endpoint to access the SignalR hub "Gamehub".
-            app.UseEndpoints((endpoints) => endpoints.MapHub<GameHub>("/GameHub"));
+            app.UseEndpoints((endpoints) => 
+                endpoints.MapHub<GameHub>("/GameHub"));
         };
-        
+
         // Configures The WebHostBuilder with the previous configurations.
         Action<IWebHostBuilder> webHostConfiguration = (webBuilder) =>
         {

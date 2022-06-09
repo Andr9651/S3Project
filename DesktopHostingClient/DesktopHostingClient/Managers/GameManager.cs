@@ -189,7 +189,7 @@ public class GameManager : INotifyPropertyChanged
         {
             Purchasable purchasable = Purchasables[purchasableId];
 
-            // Locks gamedata from being used outside this scope
+            // Locks gamedata object from being used outside this scope
             lock (GameData)
             {
                 // Placing GetBalance inside the lock ensures Repeatable Read

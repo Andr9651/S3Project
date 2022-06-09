@@ -17,10 +17,12 @@
 
             @if (gameManager.CanBuyPurchasable(p.Id))
             {
-                <button class="btn btn-primary" @onclick="() => {TryBuyPurchasable(p.Id);}">
+                <button class="btn btn-primary" 
+                    @onclick="() => {TryBuyPurchasable(p.Id);}">
                     Buy 1x for @p.Price$
                 </button>
-                <button class="btn btn-primary" @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
+                <button class="btn btn-primary" 
+                    @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
                     Buy Max
                 </button>
             }
