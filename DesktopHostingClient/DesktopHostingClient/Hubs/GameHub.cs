@@ -48,7 +48,9 @@ public class GameHub : Hub
 
     public int BuyMaxPurchasable(int purchasableId)
     {
-        return GameManager.BuyMaxPurchasable(purchasableId);
+        int buyCount = GameManager.BuyMaxPurchasable(purchasableId);
+        SendMessage($"{buyCount} was bought", "System");
+        return buyCount;
     }
 
     public void SendMessage(string message, string user)
