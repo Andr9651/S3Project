@@ -12,12 +12,14 @@ public class GameManager
     private HubConnection _connection;
     private GameData _gameData;
     private Dictionary<int, Purchasable> _purchasables;
+    public List<string> Messages { get; private set; }
 
 
     public GameManager()
     {
         _gameData = new GameData();
         _purchasables = new Dictionary<int, Purchasable>();
+        Messages = new List<string>();
     }
 
     public async Task ConnectToGame(string ip)
@@ -40,6 +42,7 @@ public class GameManager
         _connection.On<int, int>("PurchaseUpdate", ReceivePurchaseUpdate);
         _connection.On<Dictionary<int, int>>("ReceivePurchases", ReceivePurchases);
         _connection.On<Dictionary<int, Purchasable>>("ReceivePurchasables", ReceivePurchasables);
+        _connection.On<string, string>("ReceiveMessage", ReceiveMessage);
 
         await _connection.StartAsync();
     }
@@ -86,6 +89,12 @@ public class GameManager
     private void ReceivePurchasables(Dictionary<int, Purchasable> purchasables)
     {
         _purchasables = purchasables;
+        OnStateChanged?.Invoke();
+    }
+
+    private void ReceiveMessage(string message, string user)
+    {
+        Messages.Add($"{user}: {message}");
         OnStateChanged?.Invoke();
     }
 
