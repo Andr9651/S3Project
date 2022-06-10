@@ -2,8 +2,14 @@
 @page "/Game/{ip}";
 @using ModelLibrary.Model;
 
+<div class="container">
+    <div class="row">
+        <div class="col">        
+
 <h3>Balance: @gameManager.GetBalance() $</h3>
 <h4>Income: @gameManager.IncomePerSecond $/s</h4>
+
+
 
 <div class="d-inline-flex flex-wrap mt-2">
 
@@ -37,6 +43,13 @@
             }
         </div>
     }
+</div>
+
+</div>
+        <div class="col">
+            <Chat GameManager="@gameManager" ></Chat>
+        </div>
+    </div>
 </div>
 
 <br />
