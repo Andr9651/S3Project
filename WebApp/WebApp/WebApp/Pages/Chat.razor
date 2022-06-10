@@ -1,12 +1,13 @@
 ﻿
 <h1>HAHA CHAT</h1>
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <label>lable1</label>
-        <label>lable1</label>
-        <label>lable1</label>
-        <label>lable1</label>
-        <label>lable1</label>
-    </div>
+<div class="border border-2 rounded top-row ps-3 bg-light">
+   
+        @foreach (string message in GameManager.Messages)
+        {
+            <div class="border-bottom border-2 w-auto">
+                <label>@message</label>
+            </div>
+        }
+   
 </div>

@@ -4,50 +4,35 @@
 
 <div class="container">
     <div class="row">
-        <div class="col">        
-
-<h3>Balance: @gameManager.GetBalance() $</h3>
-<h4>Income: @gameManager.IncomePerSecond $/s</h4>
-
-
-
-<div class="d-inline-flex flex-wrap mt-2">
-
-    @foreach (Purchasable p in gameManager.GetPurchasables())
-    {
-        <div class="p-2 vstack border border-2 bg-light rounded mb-2 me-2">
-            <label><b>@p.Name:</b> x @gameManager.GetPurchaseAmount(p.Id)</label>
-            <label>Income: @gameManager.GetPurchasableIncome(p.Id) $/s</label>
-
-            <label>Total income: @gameManager.GetTotalPurchasableIncome(p.Id) $/s</label>
-
-            @if (gameManager.CanBuyPurchasable(p.Id))
-            {
-                <button class="btn btn-primary" 
-                    @onclick="() => {TryBuyPurchasable(p.Id);}">
-                    Buy 1x for @p.Price$
-                </button>
-                <button class="btn btn-primary" 
-                    @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
-                    Buy Max
-                </button>
-            }
-            else
-            {
-                <button class="btn btn-primary" disabled>
-                    Buy 1x for @p.Price$
-                </button>
-                <button class="btn btn-primary" disabled>
-                    Buy Max
-                </button>
-            }
-        </div>
-    }
-</div>
-
-</div>
         <div class="col">
-            <Chat GameManager="@gameManager" ></Chat>
+
+            <h3>Balance: @gameManager.GetBalance() $</h3>
+            <h4>Income: @gameManager.IncomePerSecond $/s</h4>
+
+            <div class="d-inline-flex flex-wrap mt-2">
+
+                @foreach (Purchasable p in gameManager.GetPurchasables())
+                {
+                    <div class="p-2 vstack border border-2 bg-light rounded mb-2 me-2">
+                        <label><b>@p.Name:</b> x @gameManager.GetPurchaseAmount(p.Id)</label>
+                        <label>Income: @gameManager.GetPurchasableIncome(p.Id) $/s</label>
+
+                        <label>Total income: @gameManager.GetTotalPurchasableIncome(p.Id) $/s</label>
+
+                        <button class="btn btn-primary mb-1" disabled="@(!gameManager.CanBuyPurchasable(p.Id))"
+                            @onclick="() => {TryBuyPurchasable(p.Id);}">
+                            Buy 1x for @p.Price$
+                        </button>
+                        <button class="btn btn-primary" disabled="@(!gameManager.CanBuyPurchasable(p.Id))"
+                            @onclick="async () => {await gameManager.BuyMaxPurchasable(p.Id);}">
+                            Buy Max
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col">
+            <Chat GameManager="@gameManager"></Chat>
         </div>
     </div>
 </div>
