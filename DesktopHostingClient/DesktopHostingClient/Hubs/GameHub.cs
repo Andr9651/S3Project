@@ -50,4 +50,9 @@ public class GameHub : Hub
     {
         return GameManager.BuyMaxPurchasable(purchasableId);
     }
+
+    public void SendMessage(string message, string user)
+    {
+        Clients.All.SendAsync("ReceiveMessage", message, user);
+    }
 }
